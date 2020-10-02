@@ -175,7 +175,7 @@ logging.config.dictConfig({
         #     'level': 'WARNING',
         #     'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
         # },
-        'user_file': {
+        'account_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'log/auth.log',
@@ -188,9 +188,9 @@ logging.config.dictConfig({
             'level': 'WARNING',
             'handlers': ['console'],
         },
-        'user': {
+        'account': {
             'level': LOGLEVEL,
-            'handlers': ['console', 'user_file'],
+            'handlers': ['console', 'account_file'],
             # required to avoid double logging with root logger
             'propagate': False,
         },

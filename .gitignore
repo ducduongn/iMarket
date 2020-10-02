@@ -141,5 +141,6 @@ yarn-error.log*
 
 
 # This Project
-/log/*
+/log/**
+!/log/
 
