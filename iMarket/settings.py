@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'account',
     'frontend',
+    'customer',
 
     'rest_framework',
     'knox',
