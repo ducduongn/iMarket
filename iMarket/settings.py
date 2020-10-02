@@ -33,8 +33,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'welcome',
-    # 'user',
+    'account',
+
+    'rest_framework',
+    'knox',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -105,8 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Start Config model dùng cho user
-AUTH_USER_MODEL = 'user.CustomUser'
-AUTH_PROFILE_MODULE = 'user.UserProfile'
+AUTH_USER_MODEL = 'account.CustomUser'
+AUTH_PROFILE_MODULE = 'account.UserProfile'
 # End
 
 # Internationalization
@@ -148,6 +150,7 @@ REST_FRAMEWORK = {
 # End Config REST framework
 
 # Start Cài đặt logging
+# os.environ['LOGLEVEL'] = "debug"
 LOGGING_CONFIG = None
 LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
 logging.config.dictConfig({
@@ -174,7 +177,7 @@ logging.config.dictConfig({
         'user_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'log/user.log',
+            'filename': 'log/auth.log',
             'formatter': 'console',
         },
     },
