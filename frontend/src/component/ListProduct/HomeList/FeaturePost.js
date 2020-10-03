@@ -12,12 +12,16 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Hidden from '@material-ui/core/Hidden';
 import { Button, CardActions, CardHeader, IconButton, Paper } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import { productData } from '../testdata/Home';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+
+// Icons 
+import LaptopIcon from '@material-ui/icons/Laptop';
+import HeadsetIcon from '@material-ui/icons/Headset';
+import history from '../../../router/history';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -39,9 +43,12 @@ const useStyles = makeStyles(theme => ({
     root: {
         maxWidth: 345,
         boxShadow: "none",
+        border: "solid 1px gray",
+
     },
     media: {
         height: 200,
+        objectFit: "contain",
     },
     expand: {
         transform: 'rotate(0deg)',
@@ -62,7 +69,7 @@ function ReviewCard(props) {
 
     return (
         <Card className={classes.root}>
-            <CardActionArea>
+            <CardActionArea onClick={() => history.push("/detail")}>
                 <CardMedia
                     component="img"
                     className={classes.media}
@@ -77,36 +84,42 @@ function ReviewCard(props) {
                         {price}
                     </Typography>
                 </CardContent>
-                <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                        <ShareIcon />
-                    </IconButton>
-                    <IconButton
-                        className={clsx(classes.expand)}
-                        aria-label="show more"
-                    >
-                        <AddShoppingCartIcon />
-                    </IconButton>
-                </CardActions>
             </CardActionArea>
+            <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                </IconButton>
+                <IconButton aria-label="share">
+                    <ShareIcon />
+                </IconButton>
+                <IconButton
+                    className={clsx(classes.expand)}
+                    aria-label="show more"
+                >
+                    <AddShoppingCartIcon />
+                </IconButton>
+            </CardActions>
         </Card>
     )
 }
 
+
+const iconLabelMap = {
+    "laptop": <LaptopIcon />,
+    "headphone": <HeadsetIcon />,
+    "": <LaptopIcon />,
+}
+
 export default function FeaturedPost(props) {
     const classes = useStyles();
-    const { post, icon } = props;
-
+    const { title, productList, icon } = props;
     return (
         <Grid item xs={12} md={12}>
             {/* <CardActionArea> */}
             <Card className={classes.card}>
                 <CardHeader
-                    title={post.title}
-                    avatar={icon}
+                    title={title}
+                    avatar={iconLabelMap[icon]}
                     action={
                         <IconButton aria-label="settings">
                             <MoreHorizIcon />
@@ -117,7 +130,7 @@ export default function FeaturedPost(props) {
                     <Grid>
                         <Grid container spacing={1}>
                             {
-                                productData.slice(0, 8).map(value =>
+                                productList.map(value =>
                                     <Grid item xs={12} sm={4} lg={3} key={value[0]}>
                                         <ReviewCard
                                             name={value[0]}

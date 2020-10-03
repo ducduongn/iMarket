@@ -15,9 +15,7 @@ import {
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { getErrors } from './errors';
-import {api_signUp, api_login, api_logout, api_getUser} from '../protocol/Authentification'
-import { StrictMode } from 'react';
+import { api_signUp, api_login, api_logout, api_getUser } from '../../protocol/Authentification'
 
 
 const initialState = {
@@ -98,23 +96,23 @@ axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
  * @param {Object} user firstName, lastName, email, password
  * @param {requestCallback} errorHandler 
  */
-export const signUp = (user, onApiError) => dispatch => {
+export const signUp = dispatch => (user, onApiError) => {
     console.log(user);
-    if(user.firstName && user.lastName && user.email && user.password){
+    if (user.firstName && user.lastName && user.email && user.password) {
         dispatch({ type: USER_LOADING })
-        api_signUp(user.firstName, user.lastName, user.email, user.password, 
+        api_signUp(user.firstName, user.lastName, user.email, user.password,
             data => {
                 dispatch({
                     type: REGISTER,
                     payload: data,
-                    })
+                })
             },
             err => {
-                dispatch({type: REGISTER_FAIL})
+                dispatch({ type: REGISTER_FAIL })
                 onApiError(err)
             }
-            )
-    }else {
+        )
+    } else {
         throw "sign up action: not valid user sign up info"
     }
 }
@@ -124,52 +122,53 @@ export const signUp = (user, onApiError) => dispatch => {
  * @param { Object } authInfo email, password
  * @callback errorHandler error call back
  */
-export const login = (authInfo, onApiError) => dispatch => {
+export const login = dispatch => (authInfo, onApiError) => {
     console.log("Run login")
     dispatch({ type: USER_LOADING });
-    if(authInfo.email, authInfo.password){
-        api_login(authInfo.email, authInfo.password, 
+    if (authInfo.email, authInfo.password) {
+        api_login(authInfo.email, authInfo.password,
             data => {
-                console.log(data)   
+                console.log(data)
                 dispatch({
                     type: LOGIN,
                     payload: data,
                 })
-            }, 
+            },
             err => {
-                dispatch({type: LOGIN_FAIL});
-                onApiError(err)
+                dispatch({ type: LOGIN_FAIL });
+                console.log(err);
+                onApiError(err);
             }
-            )
+        )
     } else {
         throw "login action: not valid auth info"
     }
 }
 
 // CHECK TOKEN & LOAD USER
-export const loadUser = () => (dispatch) => {
+export const loadUser = dispatch => () => {
     // Get token from state
     const token = Cookies.get("auth_token")
     dispatch({ type: USER_LOADING });
     try {
-        api_getUser(token, 
-                data=>
+        api_getUser(token,
+            data =>
                 dispatch({
                     type: USER_LOADED,
                     payload: data,
                 }),
-                err => 
+            err =>
                 dispatch({
                     type: AUTH_ERROR,
                 })
-            )
-    } catch(err) {
+        )
+    } catch (err) {
         console.log(err)
         dispatch({
             type: AUTH_ERROR,
         });
     }
-   
+
 };
 
 
@@ -179,18 +178,18 @@ export const logout = dispatch => () => {
     const token = Cookies.get("auth_token")
     dispatch({ type: USER_LOADING });
     try {
-        api_logout(token, 
-                data=>
-                    dispatch({
-                        type: LOGOUT_SUCCESS,
-                        payload: data,
-                    }),
-                err => 
-                    dispatch({
-                        type: LOGOUT_FAIL,
-                    })
-            )
-    } catch(err) {
+        api_logout(token,
+            data =>
+                dispatch({
+                    type: LOGOUT_SUCCESS,
+                    payload: data,
+                }),
+            err =>
+                dispatch({
+                    type: LOGOUT_FAIL,
+                })
+        )
+    } catch (err) {
         console.log(err)
         dispatch({
             type: AUTH_ERROR,

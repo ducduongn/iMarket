@@ -1,72 +1,38 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
 
 // Material UI
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link'
 
 
-import { Link as RouteLink, Redirect } from 'react-router-dom'
+import { Link as RouteLink } from 'react-router-dom'
 
-import { LOGIN_URL, SIGNUP_URL } from '../../urls';
+import { LOGIN_URL, SIGNUP_URL } from '../../router/urls';
 
 import { validateAuthForm } from '../../utils/validates'
 
 //Reducers 
-import { login, loadUser, signUp } from '../../reducers/auth'
-import { CircularProgress, Input } from '@material-ui/core';
-import AuthInput from '../general/AuthInput';
+import { CircularProgress } from '@material-ui/core';
 
 //ReCaptcha
 import ReCAPTCHA from 'react-google-recaptcha'
 
-import qs from 'qs'
-
-import { loadScript } from '../../utils/collection'
-import { AUTH_ERROR_HANDLE } from '../../reducers/types';
-import Autosuggest from 'react-autosuggest';
-import Copyright from '../layout/Copyright';
-
-
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-}));
+// Components
+import AuthInput from './AuthInput';
 
 const signupFields = ['firstName', 'lastName', 'email', 'password']
 const loginFields = ['email', 'password']
+
 const loginTexts = {
     submitLabel: "Sign in",
     checkBoxText: "Remember me",
     otherText: "Nead an account? Sign up",
     otherUrl: SIGNUP_URL
 }
+
 const signupTexts = {
     submitLabel: "Sign up",
     checkBoxText: "I want to receive inspiration, marketing promotions and updates via email.",
@@ -76,10 +42,12 @@ const signupTexts = {
 
 const initialShowErrorState = {}
 const initialIsError = {}
+
 signupFields.forEach(f => {
     initialShowErrorState[f] = { showError: false, helperText: 'This field is required' }
     initialIsError[f] = true
 })
+
 
 export default function MainForm(props) {
 
@@ -96,6 +64,7 @@ export default function MainForm(props) {
         firstName: null,
         lastName: null,
     })
+
     const [recaptcha, setRecaptcha] = useState({ loaded: false, expired: false, value: null })
     const handleCaptchaChange = value => {
         console.log("Captcha value:", value);
@@ -103,22 +72,21 @@ export default function MainForm(props) {
             document.getElementById('iknown').style.borderStyle = "none"
         }
         setRecaptcha({ ...recaptcha, value })
+
     };
+
     //States
     // const [authInfo, setAuthInfo] = React.useState(initialAuthState)
     const [handleError, setError] = React.useState(initialShowErrorState)
-    // Is error 
     const isError = React.useRef(initialIsError)
+
     // Reset 
     const resetValue = () => {
-        console.log('reset')
         const inputComps = refInputComp.current;
-        console.log(inputComps)
-        setError(prev => ({
+        setError(() => ({
             ...initialShowErrorState,
         }))
         fields.forEach(inp => {
-            console.log(inp)
             if (inp !== 'email')
                 inputComps[inp].value = ''
         })
@@ -126,6 +94,7 @@ export default function MainForm(props) {
         // refIsSignUp.current = signupPage
         // console.log(refInputComp)
     }
+
     const checkInput = (value, name) => {
         const helperText = validateAuthForm(value, name)
         const iserr = helperText !== ''
@@ -156,8 +125,6 @@ export default function MainForm(props) {
         const validFormData = {}
         fields.forEach(f => {
             const { value, name } = refInputComp.current[f]
-            // console.log(value)
-            // console.log(name)
             if (checkInput(value, name))
                 valid = false
             else {
@@ -165,14 +132,14 @@ export default function MainForm(props) {
             }
             showError(name)
         })
-        if (signupPage && recaptcha.value == null) {
-            valid = false
-            document.getElementById('iknown').style.border = "2px solid red"
-        } else {
-            validFormData['captcha_value'] = recaptcha.value
-        }
+        // if (signupPage && recaptcha.value == null) {
+        //     valid = false
+        //     document.getElementById('iknown').style.border = "2px solid red"
+        // } else {
+        //     validFormData['captcha_value'] = recaptcha.value
+        // }
         if (valid) {
-            onValidSubmit(validFormData, signupPage, signUpCallback)
+            onValidSubmit(validFormData, signupPage, onApiError)
         }
         // return { valid, validFormData, signup: signupPage }
     }
@@ -188,34 +155,31 @@ export default function MainForm(props) {
     //     )
     // }
 
-    //callback khi nhan response tu server
-    const signUpCallback = (success, authErrors) => {
-        if (!success) {
-            for (var key in authErrors) {
-                if (key == 'activate') {
-                    alert(authErrors[key])
-                    return
-                }
-                // skip loop if the property is from prototype
-                if (!authErrors.hasOwnProperty(key)) continue;
-                handleError[key].helperText = authErrors[key][0]
-                handleError[key].showError = true
-                isError.current[key] = true
+    //callback khi nhan error response tu server
+    const onApiError = (authErrors) => {
+        console.log("Run onApiError")
+        console.log(authErrors)
+        for (var key in authErrors) {
+            if (key == 'activate') {
+                alert(authErrors[key])
+                return
             }
-            setError(handleError)
-            console.log('not success')
-            console.log(handleError)
-            console.log(isError)
-        } else {
-
+            // skip loop if the property is from prototype
+            if (!authErrors.hasOwnProperty(key)) continue;
+            console.log(key)
+            handleError[key].helperText = authErrors[key][0]
+            handleError[key].showError = true
+            isError.current[key] = true
         }
+        setError(handleError)
+
     }
 
     return (
         <form className={classes.form} onSubmit={e => e.preventDefault()}>
             <Grid container spacing={2}>
                 {
-                    fields.map((line, index) =>
+                    fields.map((line) =>
                         (
                             <Grid item xs={12} sm={line == 'firstName' || line == 'lastName' ? 6 : 12} key={line}>
                                 <AuthInput name={line}
@@ -262,3 +226,6 @@ export default function MainForm(props) {
         </form >
     )
 }
+
+
+

@@ -11,8 +11,8 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { ListItemSecondaryAction, Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import ProcessorIcon from '../../icons/ProcessorIcon';
-import RamIcon from '../../icons/RamIcon';
+import ProcessorIcon from '../../../icons/ProcessorIcon';
+import RamIcon from '../../../icons/RamIcon';
 
 const useStyles = makeStyles((theme) => ({
     root: {

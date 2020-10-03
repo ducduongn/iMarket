@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from './store';
 
-import { loadUser } from './reducers/auth';
+import { loadUser } from './redux/reducers/auth';
 
 
 // Material UI
@@ -23,8 +23,9 @@ import {
 import history from './router/history'
 
 // My Components
-import { AuthForm } from './component/auth/AuthForms'
+import AuthSite from './Sites/Auth'
 import Home from './Sites/Home'
+import { ProductDetail } from './Sites/ProductDetail';
 // Icons
 
 // Data
@@ -33,13 +34,13 @@ import Home from './Sites/Home'
 
 function App() {
   const auth = useSelector(state => state.auth)
-  const dispatch = useDispatch()
   if (auth.token && !auth.isAuthenticated && !auth.isLoading)
-    loadUser()(dispatch)
+    loadUser(useDispatch())()
   return (
     <Router history={history}>
       <Switch>
-        <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
+        <Route path='/auth/:subpath(login|signup)' component={AuthSite} />
+        <Route path="/detail" component={ProductDetail} />
         <Route path="/" component={Home} />
       </Switch>
     </Router>

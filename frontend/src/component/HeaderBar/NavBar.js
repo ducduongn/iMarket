@@ -3,27 +3,22 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
 import Category from './Category'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Hidden } from '@material-ui/core';
 
 // Icons 
-import CategoryIcon from '@material-ui/icons/Category';
 
 // Actions
-import {logout} from '../../reducers/auth'
+import { logout } from '../../redux/reducers/auth'
 
 // Router
 import history from '../../router/history'
@@ -108,16 +103,15 @@ export default function TopNavBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-    
-    const authState = useSelector(state =>({
-                "isAuthenticated": state.auth.isAuthenticated, 
-                "isLoading": state.auth.isLoading}))
 
-    const userInfo = useSelector(state => state.auth.user)
+    const authState = useSelector(state => ({
+        "isAuthenticated": state.auth.isAuthenticated,
+        "isLoading": state.auth.isLoading
+    }))
+
     const logoutAction = logout(useDispatch()) //used for logout
 
     const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -138,13 +132,18 @@ export default function TopNavBar(props) {
         handleMobileMenuClose();
     };
 
-    const handleMobileMenuOpen = (event) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
 
+    const menuItem = (value) => value ? [
+        ["Profile", handleMenuClose],
+        ["My account", handleMenuClose],
+        ["Logout", handleLogout],
+    ] : [
+            ["Login", () => { history.push(LOGIN_URL), handleMenuClose() }],
+            ["Sign Up", () => { history.push(SIGNUP_URL), handleMenuClose() }],
+        ]
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
-        
+
         <Menu
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -154,25 +153,17 @@ export default function TopNavBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            {authState.isAuthenticated ?
-            <Fragment>
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Fragment>
-            :
-            <Fragment>
-            <MenuItem onClick={() => {history.push(LOGIN_URL), handleMenuClose()}}>Login</MenuItem>
-            <MenuItem onClick={() => {history.push(SIGNUP_URL), handleMenuClose()}}>Sign Up</MenuItem>
-            </Fragment>}
-
-        </Menu>
+            {
+                menuItem(authState.isAuthenticated).map((value) =>
+                    <MenuItem key={value[0]} onClick={value[1]}>{value[0]}</MenuItem>)
+            }
+        </Menu >
 
     );
 
     const authUserIcon = (
         <Fragment>
-             <IconButton aria-label="show 4 new mails" color="inherit">
+            <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="secondary">
                     <MailIcon />
                 </Badge>
@@ -197,7 +188,7 @@ export default function TopNavBar(props) {
 
     const guestUserIcon = (
         <Fragment>
-             <IconButton
+            <IconButton
                 edge="end"
                 aria-label="account of current user"
                 aria-controls={menuId}
