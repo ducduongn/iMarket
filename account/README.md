@@ -6,8 +6,8 @@
 
     ```json
     {  
-        "email": <email đăng nhập>,  
-        "password": <mật khẩu>,  
+        "email": "<email đăng nhập>",  
+        "password": "<mật khẩu>",  
     }
     ```
 
@@ -17,8 +17,8 @@
 
     ```json
     {  
-        "user": <Serialized User>,  
-        "token": <Token lưu phiên đăng nhập>
+        "user": "<Serialized User>",  
+        "token": "<Token lưu phiên đăng nhập>"
     }
     ```
 
@@ -26,7 +26,7 @@
 
     ```json
     {  
-        <field name>: <Noi dung loi>
+        "<field name>": "<Noi dung loi>"
     }
     ```
 
@@ -61,7 +61,7 @@
 
     ```json
     {
-        <field name>: <Noi dung loi>
+        "<field name>": "<Noi dung loi>"
     }
     ```
 
@@ -89,6 +89,6 @@
 
   ```json
     {  
-        "detail": <nội dung lỗi>  
+        "detail": "<nội dung lỗi>"  
     }
     ```
