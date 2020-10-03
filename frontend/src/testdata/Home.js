@@ -60,7 +60,7 @@ export const sections = [
     { title: 'Travel', url: '#' },
 ];
 
-export const featuredPosts = [
+export const sectionPosts = [
     {
         title: 'LAPTOP - MACBOOK',
         icon: <LaptopIcon />

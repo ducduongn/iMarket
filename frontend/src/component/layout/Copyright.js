@@ -5,12 +5,11 @@ import Link from '@material-ui/core/Link';
 export default function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Hanoi Homestay
-      </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
+            {'Copyright © '} {new Date().getFullYear()} {' - '}
+            <Link color="inherit" href="#">
+                IMarket
+            </Link>{' '}
+            - Bản quyền của Công Ty Cổ Phần ...
         </Typography>
     );
 }

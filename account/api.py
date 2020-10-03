@@ -4,8 +4,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from .serializers import UserSerializer, LoginSerializer, SignupSerializer
 from django.contrib.auth import get_user_model
-from knox.models import AuthToken
 from django.contrib.auth import login
+
+from knox.models import AuthToken
+from knox import views as knox_views
+
 from rest_framework.serializers import ValidationError as SerialValidationError
 
 import logging
@@ -24,19 +27,20 @@ class SignUpAPI(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         logger.debug('Receive request sign up\n Data: %s', request.data)
+        
+        # Tắt reCapcha
         # check_recaptcha(request)
+
         serializer = self.get_serializer(data=get_user_data(request))
         try:
             serializer.is_valid(raise_exception=True)
         except SerialValidationError as e:
             return Response({
-                "success": False,
-                "errors": e.detail
-            })
+                **e.detail
+            }, status=status.HTTP_400_BAD_REQUEST)
         user = serializer.save()
         login(request, user)
         return Response({
-            "success": True,
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1],
             "verify_link":  get_verify_link(request, user)
@@ -48,8 +52,8 @@ class LoginAPI(generics.GenericAPIView):
     """
     POST method\n
     REQUEST format {email, password}\n
-    RESPONSE format 1 {success, user, token}\n
-    RESPONSE format 2 {success, errors}\n
+    RESPONSE 1 200 {success, user, token}\n
+    RESPONSE 2 400 2 {success, errors}\n
 
     """
     serializer_class = LoginSerializer
@@ -61,9 +65,8 @@ class LoginAPI(generics.GenericAPIView):
             serializer.is_valid(raise_exception=True)
         except SerialValidationError as e:
             return Response({
-                "success": False,
-                "errors": e.detail
-            })
+                **e.detail
+            }, status=status.HTTP_400_BAD_REQUEST)
         user = serializer.validated_data
         # if AuthToken.objects.filter(user=user).exists():
         #     raise AuthenticationFailed(
@@ -72,14 +75,11 @@ class LoginAPI(generics.GenericAPIView):
         _, token = AuthToken.objects.create(user)
         login(request, user)
         return Response({
-            "success": True,
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": token
         })
 
 # Get User API
-
-
 class UserAPI(generics.RetrieveAPIView):
     """
     Get User API
@@ -120,7 +120,7 @@ class ActivateAccountAPI(generics.GenericAPIView):
         elif code == 1:
             msg = 'Account already acivated'
         else:
-            return Response({'success': True})
+            return Response({})
         #     user = UserSerializer(
         #         user, context=self.get_serializer_context()).data
-        return Response({'success': False, 'errors': msg})
+        return Response({'detail': msg}, status=status.HTTP_400_BAD_REQUEST)
