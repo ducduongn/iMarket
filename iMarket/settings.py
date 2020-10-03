@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
 # End Config REST framework
 
 # Start Cài đặt logging
-# os.environ['LOGLEVEL'] = "debug"
+os.environ['LOGLEVEL'] = "debug"
 LOGGING_CONFIG = None
 LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
 logging.config.dictConfig({

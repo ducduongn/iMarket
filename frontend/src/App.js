@@ -25,7 +25,6 @@ import history from './router/history'
 // My Components
 import { AuthForm } from './component/auth/AuthForms'
 import Home from './Sites/Home'
-import SignInSide from './component/auth/SignInSide';
 // Icons
 
 // Data
@@ -40,7 +39,7 @@ function App() {
   return (
     <Router history={history}>
       <Switch>
-        <Route path='/auth/:subpath(login|signup)' component={SignInSide} />
+        <Route path='/auth/:subpath(login|signup)' component={AuthForm} />
         <Route path="/" component={Home} />
       </Switch>
     </Router>

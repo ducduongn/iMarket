@@ -16,6 +16,8 @@ import {
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { getErrors } from './errors';
+import {api_signUp, api_login, api_logout, api_getUser} from '../protocol/Authentification'
+import { StrictMode } from 'react';
 
 
 const initialState = {
@@ -42,29 +44,14 @@ export default function (state = initialState, action) {
             };
         case LOGIN:
         case REGISTER:
-            const success = action.payload.success
-            action.callback(success, action.payload.errors)
-            if (success) {
-                // resonse success từ server
-                Cookies.set('auth_token', action.payload.token, { 'sameSite': 'Strict' })
-                return {
-                    ...state,
-                    isAuthenticated: true,
-                    isLoading: false,
-                    user: action.payload.user,
-                    token: action.payload.token
-                }
-            } else {
-                // response not success từ server
-                console.log(action.payload.errors)
-                return {
-                    ...state,
-                    isAuthenticated: false,
-                    isLoading: false,
-                    user: null,
-                    token: null,
-                    errors: action.payload.errors
-                }
+            // resonse success từ server
+            Cookies.set('auth_token', action.payload.token, { 'sameSite': 'Strict' })
+            return {
+                ...state,
+                isAuthenticated: true,
+                isLoading: false,
+                user: action.payload.user,
+                token: action.payload.token
             }
         case AUTH_ERROR:
             Cookies.remove('auth_token')
@@ -78,8 +65,8 @@ export default function (state = initialState, action) {
         case LOGOUT_FAIL:
             return state
         case LOGIN_FAIL:
+        case REGISTER_FAIL:
         case LOGOUT_SUCCESS:
-            console.log('Loging oouts')
             Cookies.remove('auth_token')
             return {
                 ...state,
@@ -111,24 +98,25 @@ axios.defaults.headers.post['X-CSRFToken'] = Cookies.get('csrftoken');
  * @param {Object} user firstName, lastName, email, password
  * @param {requestCallback} errorHandler 
  */
-export const signUp = (user, callback) => dispatch => {
-    console.log(Cookies.get('csrftoken'));
+export const signUp = (user, onApiError) => dispatch => {
     console.log(user);
-    dispatch({ type: USER_LOADING })
-    axios
-        .post(`${api_url}/auth/signup`, user)
-        .then(res => {
-            dispatch({
-                type: REGISTER,
-                payload: res.data,
-                callback: callback,
-            })
-        })
-        .catch(err => {
-            console.log('in signup action: ')
-            console.log(err)
-            console.log('-----------------')
-        });
+    if(user.firstName && user.lastName && user.email && user.password){
+        dispatch({ type: USER_LOADING })
+        api_signUp(user.firstName, user.lastName, user.email, user.password, 
+            data => {
+                dispatch({
+                    type: REGISTER,
+                    payload: data,
+                    })
+            },
+            err => {
+                dispatch({type: REGISTER_FAIL})
+                onApiError(err)
+            }
+            )
+    }else {
+        throw "sign up action: not valid user sign up info"
+    }
 }
 
 /**
@@ -136,89 +124,76 @@ export const signUp = (user, callback) => dispatch => {
  * @param { Object } authInfo email, password
  * @callback errorHandler error call back
  */
-export const login = (authInfo, callback) => dispatch => {
+export const login = (authInfo, onApiError) => dispatch => {
+    console.log("Run login")
     dispatch({ type: USER_LOADING });
-    axios
-        .post(`${api_url}/auth/login`, authInfo)
-        .then(res => {
-            dispatch({
-                type: LOGIN,
-                payload: res.data,
-                callback: callback,
-            })
-        })
-        .catch(err => {
-            console.log('in login action: ')
-            console.log(err)
-            console.log('-----------------')
-        });
+    if(authInfo.email, authInfo.password){
+        api_login(authInfo.email, authInfo.password, 
+            data => {
+                console.log(data)   
+                dispatch({
+                    type: LOGIN,
+                    payload: data,
+                })
+            }, 
+            err => {
+                dispatch({type: LOGIN_FAIL});
+                onApiError(err)
+            }
+            )
+    } else {
+        throw "login action: not valid auth info"
+    }
 }
-
-// Setup config with token - helper function
-export const addAuthHeaders = method => {
-    // Get token from state
-    const token = Cookies.get('auth_token');
-    // If token, add to headers config
-    if (token)
-        return { headers: Object.assign({ Authorization: `Token ${token}` }, axios.defaults.headers[method]) }
-    return null;
-};
 
 // CHECK TOKEN & LOAD USER
 export const loadUser = () => (dispatch) => {
-    // User Loading
-    let authHeaders = addAuthHeaders('get')
-    if (!authHeaders) {
+    // Get token from state
+    const token = Cookies.get("auth_token")
+    dispatch({ type: USER_LOADING });
+    try {
+        api_getUser(token, 
+                data=>
+                dispatch({
+                    type: USER_LOADED,
+                    payload: data,
+                }),
+                err => 
+                dispatch({
+                    type: AUTH_ERROR,
+                })
+            )
+    } catch(err) {
+        console.log(err)
         dispatch({
             type: AUTH_ERROR,
         });
-    } else {
-        dispatch({ type: USER_LOADING });
-        axios
-            .get(`${api_url}/auth/user`, authHeaders)
-            .then((res) => {
-                console.log(res.data)
-                dispatch({
-                    type: USER_LOADED,
-                    payload: res.data,
-                });
-            })
-            .catch((err) => {
-                dispatch(getErrors(err));
-                dispatch({
-                    type: AUTH_ERROR,
-                });
-            });
     }
+   
 };
 
 
 // CHECK TOKEN & LOGOUT
-export const logout = () => (dispatch) => {
-    let authHeaders = addAuthHeaders('post')
-    if (!authHeaders) {
+export const logout = dispatch => () => {
+    // Get token from state
+    const token = Cookies.get("auth_token")
+    dispatch({ type: USER_LOADING });
+    try {
+        api_logout(token, 
+                data=>
+                    dispatch({
+                        type: LOGOUT_SUCCESS,
+                        payload: data,
+                    }),
+                err => 
+                    dispatch({
+                        type: LOGOUT_FAIL,
+                    })
+            )
+    } catch(err) {
+        console.log(err)
         dispatch({
             type: AUTH_ERROR,
         });
-    } else {
-        dispatch({ type: USER_LOADING });
-        console.log('Loging oout')
-        axios
-            .post(`${api_url}/auth/logout`, {}, authHeaders)
-            .then((res) => {
-                console.log('Logout success')
-                dispatch({
-                    type: LOGOUT_SUCCESS,
-                    payload: res.data,
-                });
-            })
-            .catch((err) => {
-                console.log('Logout False')
-                console.log(err.response)
-                dispatch(getErrors(err));
-                dispatch({
-                    type: LOGOUT_FAIL,
-                });
-            });
     }
 };

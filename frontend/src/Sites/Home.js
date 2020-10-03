@@ -33,7 +33,7 @@ function ResponsiveDrawer() {
             <CssBaseline />
             <Header title="Blog" sections={sections} />
             <NavBar className={classes.appBar} />
-            <MainFeaturedPost post={mainFeaturedPost} />
+            {/* <MainFeaturedPost post={mainFeaturedPost} /> */}
             <Container maxWidth="lg">
                 <Grid container spacing={4}>
                     {featuredPosts.map((post) => (

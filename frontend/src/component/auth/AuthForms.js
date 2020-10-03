@@ -19,7 +19,7 @@ import Link from '@material-ui/core/Link'
 
 import { Link as RouteLink, Redirect } from 'react-router-dom'
 
-import { LOGIN_URL, SIGNUP_URL } from '../../urls';
+import { LOGIN_URL, SIGNUP_URL } from '../../router/urls';
 
 import { validateAuthForm } from '../../utils/validates'
 
@@ -165,14 +165,14 @@ export default function MainForm(props) {
             }
             showError(name)
         })
-        if (signupPage && recaptcha.value == null) {
-            valid = false
-            document.getElementById('iknown').style.border = "2px solid red"
-        } else {
-            validFormData['captcha_value'] = recaptcha.value
-        }
+        // if (signupPage && recaptcha.value == null) {
+        //     valid = false
+        //     document.getElementById('iknown').style.border = "2px solid red"
+        // } else {
+        //     validFormData['captcha_value'] = recaptcha.value
+        // }
         if (valid) {
-            onValidSubmit(validFormData, signupPage, signUpCallback)
+            onValidSubmit(validFormData, signupPage, onApiError)
         }
         // return { valid, validFormData, signup: signupPage }
     }
@@ -188,27 +188,23 @@ export default function MainForm(props) {
     //     )
     // }
 
-    //callback khi nhan response tu server
-    const signUpCallback = (success, authErrors) => {
-        if (!success) {
-            for (var key in authErrors) {
-                if (key == 'activate') {
-                    alert(authErrors[key])
-                    return
-                }
-                // skip loop if the property is from prototype
-                if (!authErrors.hasOwnProperty(key)) continue;
-                handleError[key].helperText = authErrors[key][0]
-                handleError[key].showError = true
-                isError.current[key] = true
+    //callback khi nhan error response tu server
+    const onApiError = (authErrors) => {
+        console.log("Run onApiError")
+        for (var key in authErrors) {
+            if (key == 'activate') {
+                alert(authErrors[key])
+                return
             }
-            setError(handleError)
-            console.log('not success')
-            console.log(handleError)
-            console.log(isError)
-        } else {
-
+            // skip loop if the property is from prototype
+            if (!authErrors.hasOwnProperty(key)) continue;
+            console.log(key)
+            handleError[key].helperText = authErrors[key][0]
+            handleError[key].showError = true
+            isError.current[key] = true
         }
+        setError(handleError)
+        
     }
 
     return (

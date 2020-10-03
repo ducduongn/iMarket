@@ -22,6 +22,13 @@ import { Button, Hidden } from '@material-ui/core';
 // Icons 
 import CategoryIcon from '@material-ui/icons/Category';
 
+// Actions
+import {logout} from '../../reducers/auth'
+
+// Router
+import history from '../../router/history'
+import { LOGIN_URL, SIGNUP_URL } from '../../router/urls';
+
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -95,15 +102,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function PrimarySearchAppBar(props) {
+export default function TopNavBar(props) {
     const { className } = props;
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-    const authState = useSelector(state => state.auth.isAuthenticated)
+    
+    const authState = useSelector(state =>({
+                "isAuthenticated": state.auth.isAuthenticated, 
+                "isLoading": state.auth.isLoading}))
+
     const userInfo = useSelector(state => state.auth.user)
-    const dispatch = useDispatch() //used for logout
+    const logoutAction = logout(useDispatch()) //used for logout
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -121,12 +132,19 @@ export default function PrimarySearchAppBar(props) {
         handleMobileMenuClose();
     };
 
+    const handleLogout = () => {
+        logoutAction()
+        setAnchorEl(null);
+        handleMobileMenuClose();
+    };
+
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
+        
         <Menu
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -136,54 +154,63 @@ export default function PrimarySearchAppBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
+            {authState.isAuthenticated ?
+            <Fragment>
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Fragment>
+            :
+            <Fragment>
+            <MenuItem onClick={() => {history.push(LOGIN_URL), handleMenuClose()}}>Login</MenuItem>
+            <MenuItem onClick={() => {history.push(SIGNUP_URL), handleMenuClose()}}>Sign Up</MenuItem>
+            </Fragment>}
+
         </Menu>
+
     );
 
-    const mobileMenuId = 'primary-search-account-menu-mobile';
+    const authUserIcon = (
+        <Fragment>
+             <IconButton aria-label="show 4 new mails" color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                    <MailIcon />
+                </Badge>
+            </IconButton>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+                <Badge badgeContent={17} color="secondary">
+                    <ShoppingCartIcon />
+                </Badge>
+            </IconButton>
+            <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+            >
+                <AccountCircle />
+            </IconButton>
+        </Fragment>
+    )
+
+    const guestUserIcon = (
+        <Fragment>
+             <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+            >
+                <AccountCircle />
+            </IconButton>
+        </Fragment>
+    )
+
     const mobileSearchId = 'primary-search-mobile';
-
-    const renderMobileMenu = (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            id={mobileMenuId}
-            keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-            onMouseLeave={() => console.log('12312')}
-        >
-            <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
-        </Menu>
-    );
 
     return (
         <Fragment>
@@ -220,31 +247,9 @@ export default function PrimarySearchAppBar(props) {
                             </IconButton>
                         </div>
                     </Hidden>
-
-                    <IconButton aria-label="show 4 new mails" color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <MailIcon />
-                        </Badge>
-                    </IconButton>
-                    <IconButton aria-label="show 17 new notifications" color="inherit">
-                        <Badge badgeContent={17} color="secondary">
-                            <ShoppingCartIcon />
-                        </Badge>
-                    </IconButton>
-                    <IconButton
-                        edge="end"
-                        aria-label="account of current user"
-                        aria-controls={menuId}
-                        aria-haspopup="true"
-                        onClick={handleProfileMenuOpen}
-                        color="inherit"
-                    >
-                        <AccountCircle />
-                    </IconButton>
-
+                    {authState.isAuthenticated ? authUserIcon : guestUserIcon}
                 </Toolbar>
             </AppBar>
-            {renderMobileMenu}
             {renderMenu}
         </Fragment>
     );
