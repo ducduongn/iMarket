@@ -139,6 +139,8 @@ yarn-debug.log*
 yarn-error.log*
 # ----------------------------------------
 
+# Pycharm
+/.idea
 
 # This Project
 /tmp/*
