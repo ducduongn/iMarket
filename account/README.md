@@ -2,87 +2,93 @@
 
 ## Login
 
-**REQUEST**  
-POST method
-```json 
-{  
-    "email": <email đăng nhập>,  
-    "password": <mật khẩu>,  
-}
-```
+* **REQUEST** (POST)
 
-**RESPONSE**
-* Thành công  
-RESPONSE STATUS: 200  
-```json 
-{  
-    "user": <Serialized User>,  
-    "token": <Token lưu phiên đăng nhập>   
-}
-```
+    ```json
+    {  
+        "email": <email đăng nhập>,  
+        "password": <mật khẩu>,  
+    }
+    ```
 
-* Lỗi  
-RESPONSE STATUS: 400  
-```json 
-{  
-    <field name>: <Noi dung loi>
-}
-```
+* **RESPONSE**
+
+  * Thành công: `response_status: 200`  
+
+    ```json
+    {  
+        "user": <Serialized User>,  
+        "token": <Token lưu phiên đăng nhập>
+    }
+    ```
+
+  * Lỗi 1: `response_status: 400`  
+
+    ```json
+    {  
+        <field name>: <Noi dung loi>
+    }
+    ```
 
 ## Sign Up
 
-**REQUEST**  
-POST Method 
-```json 
-{  
-    "first_name",  
-    "last_name",  
-    "email",  
-    "password",
-    "captcha_value"
-}
-```
+* **REQUEST** (POST)
 
-**RESPONSE**
-* Thành công  
-RESPONSE STATUS: 200  
-```json 
-{
-    "user",
-    "token",
-    "verify_link"
-}
-```
-* Lỗi  
-RESPONSE STATUS: 400  
-```json 
-{   
-    <field name>: <Noi dung loi>
-}
-```
+    ```json
+
+    {  
+        "first_name",  
+        "last_name",  
+        "email",  
+        "password",
+        "captcha_value"
+    }
+    ```
+
+* **RESPONSE**
+
+  * Thành công: `response_status: 200`  
+  
+    ```json
+    {
+        "user",
+        "token",
+        "verify_link"
+    }
+    ```
+
+  * Lỗi 1: `response_status: 400`
+
+    ```json
+    {
+        <field name>: <Noi dung loi>
+    }
+    ```
 
 ## LOGOUT
 
-**REQUEST**  
-POST Method  
-Header
-> Authorication: Token \<token>
-```json 
-{  
-}
-```
+* **REQUEST** (POST)
+    > Header  
+    > Authorication: Token \<token>
 
-**RESPONSE**
-* Thành công  
-RESPONSE STATUS: 200  
-```json 
-{
-}
-```
-* Lỗi  
-RESPONSE STATUS: 401 (Invalid Token)  
-```json 
-{  
-    "detail": <nội dung lỗi>  
-}
-```
+    ```json
+    {  
+    }
+    ```
+
+* **RESPONSE**
+
+  * Thành công
+
+  ```json
+    {
+    }
+  ```
+
+  * Lỗi: `status code: 401 (Invalid Token)`
+
+  ```json
+    {  
+        "detail": <nội dung lỗi>  
+    }
+    ```

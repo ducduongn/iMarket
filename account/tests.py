@@ -134,7 +134,6 @@ class TestAuth(TestCase):
                          account['verify'] if activation is None else activation)
 
     def assert_login_ok(self, response, account, activation=None):
-        self.assertTrue(response['success'])
         self.assert_account(response['user'], account, activation)
         self.tokens.append({
             "token":  response['token'],
@@ -216,3 +215,31 @@ class TestAuth(TestCase):
         self.t_get_user(self.invalid_tokens, self.assert_login_token_fail)
 
         self.t_logout(self.tokens)
+
+
+class TestAccountSignUp(TestCase):
+    client = Client()
+
+    signup_accounts = [
+        {"firstName": "Test", "lastName": "User",
+            "email": "testuser001@email.com", "password": "qwer1234!", "verify": True},
+
+        {"firstName": "Test", "lastName": "User",
+         "email": "testuser002@email.com", "password": "qwer1234!",  "verify": False},
+
+        {"firstName": "Test", "lastName": "User",
+         "email": "testuser003@email.com", "password": "qwer1234!",  "verify": False}
+    ]
+
+    response_expected = [
+        {"user": {"first_name": "Test", "last_name": "User", "email": "testuser001@email.com",
+                  "is_verified": True},
+         "token": "1cf41ce012053a62a764fc3741b6284a3c818d948fe3dbb6640f0d6d8e5191b7"}
+    ]
+
+    def test1(self):
+
+
+class TestAccountLogin(TestCase):
+
+    client = Client()
