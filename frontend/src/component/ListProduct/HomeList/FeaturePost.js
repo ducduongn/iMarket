@@ -23,6 +23,10 @@ import LaptopIcon from '@material-ui/icons/Laptop';
 import HeadsetIcon from '@material-ui/icons/Headset';
 import history from '../../../router/history';
 
+// Cart Action
+import {addToCart} from '../../../redux/reducers/cart';
+import { useDispatch } from 'react-redux';
+
 const useStyles = makeStyles(theme => ({
     card: {
         // display: 'flex',
@@ -66,6 +70,7 @@ const useStyles = makeStyles(theme => ({
 function ReviewCard(props) {
     const { image, title, name, price } = props
     const classes = useStyles();
+    const addToCartAction = addToCart(useDispatch())
 
     return (
         <Card className={classes.root}>
@@ -95,6 +100,7 @@ function ReviewCard(props) {
                 <IconButton
                     className={clsx(classes.expand)}
                     aria-label="show more"
+                    onClick={() => addToCartAction({productId: name})}
                 >
                     <AddShoppingCartIcon />
                 </IconButton>

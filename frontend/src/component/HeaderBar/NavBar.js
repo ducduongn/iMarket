@@ -109,6 +109,8 @@ export default function TopNavBar(props) {
         "isLoading": state.auth.isLoading
     }))
 
+    const cartState = useSelector(state => state.cart)
+
     const logoutAction = logout(useDispatch()) //used for logout
 
     const isMenuOpen = Boolean(anchorEl);
@@ -169,7 +171,7 @@ export default function TopNavBar(props) {
                 </Badge>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={17} color="secondary">
+                <Badge badgeContent={cartState.numProduct} color="secondary">
                     <ShoppingCartIcon />
                 </Badge>
             </IconButton>

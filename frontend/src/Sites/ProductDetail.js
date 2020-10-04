@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 
 // Material UI
 import { Breadcrumbs, Button, Card, Divider, Grid, makeStyles, Paper, TextField, Typography } from '@material-ui/core';
@@ -27,6 +27,7 @@ import { withStyles } from '@material-ui/styles';
 
 import clsx from 'clsx';
 import FeaturedPost from '../component/ListProduct/HomeList/FeaturePost';
+import { addToCart } from '../redux/reducers/cart';
 
 const useStyles = makeStyles(theme => ({
     breadcrumbs: {
@@ -85,6 +86,7 @@ export const ProductDetail = () => {
     const classes = useStyles();
     const [detail, setDetail] = React.useState();
     const [productList, setProductList] = React.useState([]);
+    const addToCartAction = addToCart(useDispatch())
 
     React.useEffect(() => {
         api_getProductList(setProductList)
@@ -123,7 +125,7 @@ export const ProductDetail = () => {
                                 <Divider />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <StyledButton color='blue' option={1} value={1} >Thêm vào giỏ hàng</StyledButton>
+                                    <StyledButton color='blue' option={1} value={1} buttonProps={{onClick: ()=>addToCartAction({productId: detail.title})}} >Thêm vào giỏ hàng</StyledButton>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <StyledButton color='default' option={1} value={1} >Đặt mua</StyledButton>
