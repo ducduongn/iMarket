@@ -1,6 +1,37 @@
 {
-    "title": "Laptop HP ProBook 440 G6 (5YM63PA) (14' HD/i3-8145U/4GB/500GB HDD/UHD 620/Free DOS/1.6 kg)",
+    "title": "Laptop ASUS VivoBook 15 ",
     "brand": "ASUS",
-    "price": "17.850.000",
-    "description": "Description"
+    "price": "16.990.000đ",
+    "rating": 4,
+    "description": "A512FA-EJ1281T (15.6' FHD/i5-10210U/8GB/512GB SSD/Intel UHD/Win10/1.7kg)",
+    "images":  [{
+        "original": "https://lh3.googleusercontent.com/DZ5gwtL8KALjXWUcnQ1wPlM72yMhW5hVuSgitBxcyKBKqeyVErs-0b0rxthJyRcF9XtRHVXYIkvPMotp9A=w500-rw",
+        "thumbnail": "https://lh3.googleusercontent.com/DZ5gwtL8KALjXWUcnQ1wPlM72yMhW5hVuSgitBxcyKBKqeyVErs-0b0rxthJyRcF9XtRHVXYIkvPMotp9A"
+      },
+      {
+        "original": "https://lh3.googleusercontent.com/vjTTR2zhusrvk-_SSobn4D5dJFmPNJ50XG61rTu7eN5jSClUseT9o5Ihetbn1s0azOpXE4QyT7Fb9Pb2CDU=w500-rw",
+        "thumbnail": "https://lh3.googleusercontent.com/vjTTR2zhusrvk-_SSobn4D5dJFmPNJ50XG61rTu7eN5jSClUseT9o5Ihetbn1s0azOpXE4QyT7Fb9Pb2CDU"
+      }],
+    "relatedProducts": [
+        [
+            "Laptop HP ProBook 440 G6 (5YM63PA) (14' HD/i3-8145U/4GB/500GB HDD/UHD 620/Free DOS/1.6 kg)",
+            "/api/products/19030313/default_image",
+            "10.990.000đ"
+        ],
+        [
+            "Laptop ASUS 14 X409JA-EK012T (14' FHD/i5-1035G1/4GB/1TB HDD/Intel UHD/Win10/1.6kg)",
+            "/api/products/200500680/default_image",
+            "12.790.000đ"
+        ],
+        [
+            "Laptop ASUS VivoBook 14 A412FA-EK155T (14' FHD/i3-8145U/4GB/1TB HDD/UHD 620/Win10/1.5kg)",
+            "/api/products/200500684/default_image",
+            "10.690.000đ"
+        ],
+        [
+            "Laptop Acer Aspire 5 A514-51-35NN (NX.H6USV.001) (14' HD/i3-8145U/4GB/1TB HDD/Linux/1.9 kg)",
+            "/api/products/19020002/default_image",
+            "10.490.000đ"
+        ]
+    ]
 }

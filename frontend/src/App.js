@@ -9,17 +9,12 @@ import { loadUser } from './redux/reducers/auth';
 
 
 // Material UI
-import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
 //Router
 import {
   Router,
   Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from "react-router-dom";
+  Route} from "react-router-dom";
 import history from './router/history'
 
 // My Components
@@ -33,9 +28,11 @@ import { ProductDetail } from './Sites/ProductDetail';
 
 
 function App() {
+  // Đăng nhập nếu có token trong Coolie
   const auth = useSelector(state => state.auth)
   if (auth.token && !auth.isAuthenticated && !auth.isLoading)
     loadUser(useDispatch())()
+  
   return (
     <Router history={history}>
       <Switch>
