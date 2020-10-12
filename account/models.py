@@ -8,7 +8,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 from .managers import CustomUserManager
 
 
-
 # Custom User với email làm trường chính
 
 
@@ -22,17 +21,18 @@ class CustomUser(AbstractUser):
                                       default=False,
                                       null=False)
 
-    address = models.CharField(_('Address'),
-                               max_length=150,
-                               blank=False,
-                               null=False)
+    # Để không cần nhập trong quá trình Dev sprint 1
+    # address = models.CharField(_('Address'),
+    #                            max_length=150,
+    #                            blank=False,
+    #                            null=False)
 
-    city = models.CharField(_('City'),
-                                max_length=100,
-                                blank=False,
-                                null=False)
-    country = models.CharField(
-        _('Country'), max_length=100, blank=False, null=False)
+    # city = models.CharField(_('City'),
+    #                             max_length=100,
+    #                             blank=False,
+    #                             null=False)
+    # country = models.CharField(
+    #     _('Country'), max_length=100, blank=False, null=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -70,26 +70,27 @@ class UserProfile(models.Model):
 #         UserProfile.objects.create(user=instance)
 #     instance.profile.save()
 
+# ? Tại sao Product lại ở đây ?
 
-class Product(models.Model):
-    title = models.CharField(max_length=100)
-    price = models.FloatField()
-    quantity = models.IntegerField()
-    # category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
-    # brand = models.CharField(choices=BRAND_CHOICES, max_length=1)
-    description = models.TextField()
-    image = models.ImageField()
+# class Product(models.Model):
+#     title = models.CharField(max_length=100)
+#     price = models.FloatField()
+#     quantity = models.IntegerField()
+#     # category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+#     # brand = models.CharField(choices=BRAND_CHOICES, max_length=1)
+#     description = models.TextField()
+#     image = models.ImageField()
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
-    # @property
-    # def imageURL(self):
-    #     try:
-    #         url = self.image.url
-    #     except:
-    #         url = ''
-    #     return url
+#     # @property
+#     # def imageURL(self):
+#     #     try:
+#     #         url = self.image.url
+#     #     except:
+#     #         url = ''
+#     #     return url
 
 
 # class Order(models.Model):
@@ -129,7 +130,7 @@ class Product(models.Model):
 #     quantity = models.IntegerField(default=0, null=True, blank=True)
 #     date_added = models.DateTimeField(auto_now_add=True)
 
-	# @property
-	# def get_total(self):
-	# 	total = self.product.price * self.quantity
-	# 	return total
+        # @property
+        # def get_total(self):
+        # 	total = self.product.price * self.quantity
+        # 	return total
