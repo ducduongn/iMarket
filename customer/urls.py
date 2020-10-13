@@ -1,9 +1,9 @@
 from rest_framework import routers
 from .api import CustomerViewSet, GetPostedProduct
+from django.urls import path
 
 routers = routers.DefaultRouter()
 routers.register('api/customer', CustomerViewSet)
 # Register thêm GetPostedProduct
-routers.register('api/products', GetPostedProduct)
 
-urlpatterns = routers.urls
+urlpatterns = routers.urls + [path('api/products', GetPostedProduct.as_view())]

@@ -9,11 +9,13 @@ djangorestframework = "*"
 coverage = "*"
 django-rest-knox = "*"
 requests = "*"
+pillow = "*"
 
 [dev-packages]
 pylint = "*"
 autopep8 = "*"
 rope = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.8"

@@ -2,17 +2,19 @@ from django.db import models
 
 # Create your models here.
 
+
 class Customer(models.Model):
     account = models.ForeignKey(
         'account.CustomUser',
-        on_delete = models.CASCADE,
+        on_delete=models.CASCADE,
     )
+
 
 class Product(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
     quantity = models.IntegerField()
-    description = models.TextField()
+    # description = models.TextField()
     image = models.ImageField()
 
     def __str__(self):
@@ -64,7 +66,7 @@ class Product(models.Model):
 #     quantity = models.IntegerField(default=0, null=True, blank=True)
 #     date_added = models.DateTimeField(auto_now_add=True)
 
-	# @property
-	# def get_total(self):
-	# 	total = self.product.price * self.quantity
-	# 	return total
+        # @property
+        # def get_total(self):
+        # 	total = self.product.price * self.quantity
+        # 	return total

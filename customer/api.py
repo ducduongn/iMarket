@@ -23,8 +23,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
 class GetPostedProduct(ListCreateAPIView):
     '''Trả về danh sách tất cả các Product, có phân trang.'''
 
-    serializer_class = CustomerSerializer
-    permission_classes = (IsAuthenticated,)
+    serializer_class = ProductSerializer
+    # permission_classes = (IsAuthenticated,)
     pagination_class = CustomPagination
 
     def get_queryset(self):

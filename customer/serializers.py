@@ -16,7 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source='creator.username')
 
     class Meta:
-        product = Product
+        model = Product
         fields = '__all__'
 
 

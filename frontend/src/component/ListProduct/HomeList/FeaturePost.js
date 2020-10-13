@@ -133,9 +133,9 @@ export default function FeaturedPost(props) {
                                 productList.map(value =>
                                     <Grid item xs={12} sm={4} lg={3} key={value[0]}>
                                         <ReviewCard
-                                            name={value[0]}
-                                            image={value[1]}
-                                            price={value[2]}
+                                            name={value.title}
+                                            image={value.image}
+                                            price={value.price}
                                         />
                                     </Grid>
                                 )
