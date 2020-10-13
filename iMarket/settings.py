@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django_extensions',  # Để chạy script tạo data cho CSDL
+    'django_extensions',  # Để chạy script tạo data cho CSDL (Dev only)
+    'rest_framework_filters', # filtering function
 ]
 
 MIDDLEWARE = [
@@ -134,6 +135,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    # '/var/www/static/',
+]
 
 # Start Cài đặt cho chức năng gửi email
 # EMAIL_USE_TLS = True
@@ -150,6 +155,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+       'rest_framework_filters.backends.RestFrameworkFilterBackend',
     ),
 }
 # End Config REST framework

@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from customer.models import Customer
-from customer.models import Product
+from customer.models import Customer, Product, Category
 # from django.contrib.auth.models import User | Không dùng "User" để lấy model, dùng get_user_model
 from django.contrib.auth import get_user_model
 
@@ -19,6 +18,10 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
 
 # create class to serializer usermodel
 class UserSerializer(serializers.ModelSerializer):

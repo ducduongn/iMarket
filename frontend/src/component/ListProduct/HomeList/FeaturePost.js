@@ -118,7 +118,7 @@ export default function FeaturedPost(props) {
             {/* <CardActionArea> */}
             <Card className={classes.card}>
                 <CardHeader
-                    title={title}
+                    title={title.toUpperCase()}
                     avatar={iconLabelMap[icon]}
                     action={
                         <IconButton aria-label="settings">
@@ -133,7 +133,7 @@ export default function FeaturedPost(props) {
                                 productList.map(value =>
                                     <Grid item xs={12} sm={4} lg={3} key={value[0]}>
                                         <ReviewCard
-                                            name={value.title}
+                                            name={value.name}
                                             image={value.image}
                                             price={value.price}
                                         />

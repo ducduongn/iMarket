@@ -1,0 +1,13 @@
+{
+    "laptop": [
+        "Văn phòng", "Gamming", "Workstation"
+    ],
+    "phụ kiện máy tính": [
+        "chuột", "bàn phím", "tai nghe"
+    ],
+    "thiết bị lưu trữ": [
+        "usb", "hdd", "sdd", "ổ cứng di động"
+    ],
+    "màn hình": [],
+    "đồ gia dụng": []
+}

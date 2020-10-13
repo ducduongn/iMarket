@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const getCategory = (callback, errCallback) => {
     axios
-        .get('static/frontend/data/category.json')
+        .get('static/testdata/amazon_category.json')
         .then(res => callback(res.data))
         .catch((err) => errCallback(err))
 }
