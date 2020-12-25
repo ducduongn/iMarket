@@ -36,7 +36,7 @@ class Product(models.Model):
 
 
 class Rating(models.Model):
-    product = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", verbose_name=_("Rating"), on_delete=models.CASCADE)
     rating = models.FloatField(_("Rating"))
     count1 = models.IntegerField(_("Count 1 star"))
     count2 = models.IntegerField(_("Count 2 star"))
@@ -57,7 +57,7 @@ class TierVariation(models.Model):
 class ProductModel(models.Model):
     # black, nhom
     #ids
-    product = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", verbose_name=_("Product Model"), on_delete=models.CASCADE)
     tier_indexs = models.CharField(_("Tier Indexs"), max_length=50, validators=[int_list_validator])
 
     #prices
@@ -106,7 +106,7 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField()
 
 class ShipProfile(models.Model):
-    customer = models.ForeignKey(get_user_model(), verbose_name=_(""), on_delete=models.CASCADE)
+    customer = models.ForeignKey(get_user_model(), verbose_name=_("Ship Profile"), on_delete=models.CASCADE)
     firstname = models.CharField(_("First Name"), max_length=50)
     lastname = models.CharField(_("Last Name"), max_length=50)
     address = models.CharField(_("Address"), max_length=50)
