@@ -102,7 +102,7 @@ ENV/
 
 .DS_Store
 *.sqlite3
-media/
+# media/ #luu image
 *.pyc
 *.db
 *.pid
