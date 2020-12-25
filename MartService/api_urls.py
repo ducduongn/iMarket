@@ -23,6 +23,7 @@ app_name = 'api_mart_service'
 urlpatterns = [
     # url(r'^', include(router.urls)),
     path('products/', ProductView.as_view(), name="products"),
+    path('products/<int:pk>/', ProductView.as_view()),
     path('products/product-list/', ProductList.as_view(), name="product-list"),
     path('products/product-search/', ProductSearchList.as_view(), name="product-search"),
     path('orders/', OrderView.as_view(), name="orders"),

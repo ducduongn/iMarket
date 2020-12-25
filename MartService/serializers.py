@@ -8,7 +8,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['productName', 'description', 'price', 'brand', 'gift', 'numRating', 'comparePrice']
+        fields = [field.name for field in model._meta.fields]
+        fields.append('user')
+        
 
 
 class CategorySerializer(serializers.ModelSerializer):
