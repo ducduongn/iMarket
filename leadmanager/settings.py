@@ -36,17 +36,24 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'django_filters',
+    
+    # Cloundinary để lưu image, các setting ở CLOUDINARY_STORAGE
+    # Make sure that django.contrib.staticfiles is before cloudinary_storage
+    'django.contrib.staticfiles',
+    # 'cloudinary_storage',
+    # 'cloudinary',
 
-
-    'leads',
-    'knox',
     'rest_framework',
+    # Auth
+    'knox',
+    'rest_framework_jwt',
+    
+    # My apps
+    'leads',
     'account',
     'MartService',
 
-    'rest_framework_jwt',
     'django_extensions',  # Để chạy script tạo data cho CSDL (Dev only)
     # 'rest_framework_filters', # filtering function
 ]
@@ -88,7 +95,7 @@ WSGI_APPLICATION = 'leadmanager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'django_db',
+        'NAME': BASE_DIR / 'db.sqlite3',
         # 'username' : 'root',
         # 'PASSWORD': 'shakurafantr05'
     }
@@ -132,8 +139,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -151,3 +158,13 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'account.User'
+
+# Media files (Image, video, ...)
+MEDIA_URL = '/media/'  # or any prefix you choose
+MEDIA_ROOT = 'media/'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'hmhn2208',
+    'API_KEY': '747449444867285',
+    'API_SECRET': 'J1BsNEzZJVL5LTU8IK9af_Y4ZmM'
+}

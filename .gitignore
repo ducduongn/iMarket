@@ -144,3 +144,4 @@ yarn-error.log*
 
 # This Project
 /tmp/*
+django_db

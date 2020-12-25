@@ -5,42 +5,54 @@ from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeFie
 from decimal import Decimal
 from django.core.validators import int_list_validator
 from django.contrib.auth import get_user_model
-
+from django_unixdatetimefield import UnixDateTimeField
 from phonenumber_field.modelfields import PhoneNumberField
+from .storage import DontCreateIfExistStorage
 #--------------------------------Product-----------------------------
 
 class Shop(models.Model):
+    ctime =  UnixDateTimeField(_("Created at"), auto_now_add=True)
     shop_name = models.CharField(_("Shop Name"), max_length=100, blank=False)
+    
     class ShopStatus(models.IntegerChoices):
         ACTIVE = 1, 'Actice'
         INACTIVE = 0, 'Inactive'
     shop_status = models.SmallIntegerField(default=ShopStatus.INACTIVE, choices=ShopStatus.choices)
+    description = models.CharField(_("Description"), max_length=300, null=True)
+    rating_star = models.FloatField(_("Rating"))
 
+    def __str__(self):
+        return self.shop_name
 class Product(models.Model):
     # ids
     shop = models.ForeignKey("Shop", related_name= 'products',on_delete=models.CASCADE)
     # des info
     name = models.CharField(_('Product name'),max_length=50, blank=False)
-    brand = models.CharField(_("Brand"), max_length=50)
+    brand = models.CharField(_("Brand"), max_length=50, null=True)
     category = models.ForeignKey("Category", verbose_name=_("Category"), related_name='products', on_delete=models.SET_NULL, null=True)
     # numbers
     quantity_in_stock = models.PositiveIntegerField()
-    description = models.CharField(_('Description'), max_length=200, blank=False)
+    description = models.CharField(_('Description'), max_length=500, blank=False)
     active = models.BooleanField()
 
-    ctime = models.DateField(_("Created at"), auto_now=True)
+    ctime =  UnixDateTimeField(_("Created at"), auto_now_add=True)
     uptime = models.DateField(_("Updated at"), auto_now=True)
 
+    oldprice = models.IntegerField(_("Price before discount"))
     #dev only
-    image = models.ImageField()
-    
+    image = models.ImageField(_("Overview Image"), upload_to='images/', storage=DontCreateIfExistStorage())
+    stock = models.IntegerField(_("Number in Stock"))
     class Meta:
         db_table = "product"
+    def __str__(self):
+        return self.name
 
-
+class ProductImage():
+    product = models.ForeignKey("Product", verbose_name=_("Product Images"), related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(_("Image"), upload_to='images/')
 
 class Rating(models.Model):
-    product = models.ForeignKey("Product", verbose_name=_("Rating"), on_delete=models.CASCADE)
+    product = models.OneToOneField("Product", verbose_name=_("Rating"), on_delete=models.CASCADE)
     rating = models.FloatField(_("Rating"))
     count1 = models.IntegerField(_("Count 1 star"))
     count2 = models.IntegerField(_("Count 2 star"))
@@ -57,7 +69,8 @@ class TierVariation(models.Model):
     options = models.CharField(_("Options"), max_length=100)
     # black, blue - mau 
     # nhom, nhua - chat lieu
-
+    class Meta:
+        unique_together = ('product', 'tier_order')
 class ProductModel(models.Model):
     # black, nhom
     #ids
@@ -65,17 +78,19 @@ class ProductModel(models.Model):
     tier_indexs = models.CharField(_("Tier Indexs"), max_length=50, validators=[int_list_validator])
 
     #prices
-    oldprice = models.IntegerField(_("Old Price"))
+    # oldprice = models.IntegerField(_("Old Price"))
     price = models.IntegerField(_("Price"))
 
     #stock
     stock = models.IntegerField(_("Number in Stock"))
+    sold = models.IntegerField(_("Sold"))
 
 class Category(models.Model):
-    name = models.CharField(_('Category Name'),max_length=50, unique=True, blank=False)
+    name = models.CharField(_('Category Name'),max_length=50, blank=False)
     description = models.CharField(_('Description'), max_length=200, blank=True)
     parent = models.ForeignKey('Category', verbose_name=_('Parent Category'), null=True, on_delete=models.CASCADE)
-
+    class Meta:
+        unique_together = ('name', 'parent')
     def __str__(self):
         return self.name
 

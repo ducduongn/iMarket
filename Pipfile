@@ -20,6 +20,8 @@ django-phonenumber-field = {extras = ["phonenumberslite"],version = "*"}
 djangorestframework-simplejwt = "*"
 requests = "*"
 pillow = "*"
+django-unixdatetimefield = "*"
+django-cloudinary-storage = "*"
 
 [requires]
 python_version = "3.8"
