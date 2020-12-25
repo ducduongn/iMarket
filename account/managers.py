@@ -4,45 +4,35 @@ from django.utils.translation import ugettext_lazy as _
 
 import account.models as umodels
 
-
-class CustomUserManager(BaseUserManager):
-    """
-    Custom user model manager where email is the unique identifiers
-    for authentication instead of usernames.
-    """
-
-    def create_user(self, email, password, commit=True, **extra_fields, ):
-        """
-        Create and save a User with the given email and password.
-        """
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, is_admin=False, is_staff=False, is_active=True):
         if not email:
-            raise ValueError(_('The Email must be set'))
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        if commit:
-            user.save()
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
+
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        user.set_password(password)  # change password to hash
+        user.admin = is_admin
+        user.staff = is_staff
+        user.active = is_active
+        # user.save(using=self._db)
         return user
-
-    def create_superuser(self, email, password, **extra_fields):
-        """
-        Create and save a SuperUser with the given email and password.
-        """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
-
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(_('Superuser must have is_staff=True.'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(_('Superuser must have is_superuser=True.'))
-        return self.create_user(email, password, **extra_fields)
-
-    def safe_get(self, email=None):
-        account = None
-        if email:
-            try:
-                account = self.model.objects.get(email=email)
-            except self.model.DoesNotExist:
-                pass
-        return account
+        
+    def create_superuser(self, email, full_name, profile_picture, password=None, **extra_fields):
+        if not email:
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
+    
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        user.set_password(password)
+        user.admin = True
+        user.staff = True
+        user.active = True
+        user.save(using=self._db)
+        return user

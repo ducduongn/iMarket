@@ -8,28 +8,8 @@ import FeaturedPost from '../component/ListProduct/HomeList/FeaturePost';
 
 // Icons
 // Data
-import { api_getProductList, api_getProductListByCategory, api_getCategory } from '../protocol/ProductCall';
+import { api_getProductList, api_getProductListByCategory, api_getCategory, buildCategoryTree } from '../protocol/ProductCall';
 import { Base } from './Base';
-
-function buildCategoryTree(response) {
-    let root = {}
-    let category_name = {}
-    response.map(value => {
-        category_name[value.id] = value.name
-        if(value.parent){
-            if(value.parent in root){
-                root[value.parent].push(value.id)
-            } else {
-                root[value.parent] = [value.id]
-            }
-        } else {
-            if(!(value.id in root)){
-                root[value.id] = []
-            }
-        }
-    })
-    return [root, category_name]
-}
 
 function ResponsiveDrawer() {
     const [productList, setProductList] = React.useState([]);
@@ -38,11 +18,11 @@ function ResponsiveDrawer() {
         api_getCategory(data => {
             let [tree, category_name] = buildCategoryTree(data)
             let products = [];
-            let promises = Object.keys(tree).map(id => 
-                api_getProductListByCategory(true, id, data => {
+            let promises = Object.keys(tree).map(id =>
+                api_getProductListByCategory(true, id, 4, 0, data => {
                     products.push({
                         title: category_name[id],
-                        icon: "latop",
+                        icon: "laptop",
                         products: data.results
                     })
                 })

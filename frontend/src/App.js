@@ -26,6 +26,7 @@ import history from './router/history'
 import AuthSite from './Sites/Auth'
 import Home from './Sites/Home'
 import { ProductDetail } from './Sites/ProductDetail';
+import { ProductListByCategory } from './Sites/ProductListByCategory';
 // Icons
 
 // Data
@@ -41,6 +42,7 @@ function App() {
       <Switch>
         <Route path='/auth/:subpath(login|signup)' component={AuthSite} />
         <Route path="/detail" component={ProductDetail} />
+        <Route path="/category/:id(\d+)" component={ProductListByCategory} />
         <Route path="/" component={Home} />
       </Switch>
     </Router>

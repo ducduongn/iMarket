@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { makeStyles, Grid } from '@material-ui/core'
-import ProductReviewCard from './ReviewCard/ProductReviewCard';
-import { listProduct } from '../../testdata/ListProduct'
+import ProductReviewCard from './ProductReviewCard';
+import { listProduct } from '../../../testdata/ListProduct'
 
 const useStyles = makeStyles((theme) => ({
     root: {

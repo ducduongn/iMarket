@@ -1,4 +1,12 @@
+const path = require('path');
+
+
 module.exports = {
+	entry: './frontend/src/index.js',
+	output: {
+		filename: 'index.js',
+		path: path.resolve(__dirname,'frontend/static/frontend/')
+	},
     module: {
         rules: [
             {

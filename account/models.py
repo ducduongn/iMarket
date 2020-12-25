@@ -1,136 +1,129 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
+from django.contrib import auth
+import django
+from django.contrib.auth.models import PermissionsMixin
 
-from phonenumber_field.modelfields import PhoneNumberField
+# from .leadmanager import settings
 
-from .managers import CustomUserManager
+class Car(models.Model):
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=20)
+    brand = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'car'
 
 
-# Custom User với email làm trường chính
+class UserManager(BaseUserManager):
+    def create_user(self, email, password, commit=True, **extra_fields, ):
+        print('asdfa')
+        if not email:
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
 
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        if commit:
+            user.save()
+        return user
+        
+    def create_superuser(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("User must have an email")
+        if not password:
+            raise ValueError("User must have a password")
+    
+        user = self.model(
+            email=self.normalize_email(email),
+            password = password
+        )
+        user.set_password(password)
+        user.admin = True
+        user.staff = True
+        user.active = True
+        user.save(using=self._db)
+        return user
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
+    # Delete not use field
+    objects = UserManager()
+
     username = None
-    email = models.EmailField(_('Email address'),
-                              unique=True,
-                              null=False)
+    email = models.EmailField(unique=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
-    is_verified = models.BooleanField(_('Verified'),
-                                      default=False,
-                                      null=False)
+    is_active = models.BooleanField('active', default=True)
+    is_admin = models.BooleanField('admin', default=False)
+    is_verified = models.BooleanField('verified', default=True)
+    
 
-    # Để không cần nhập trong quá trình Dev sprint 1
-    # address = models.CharField(_('Address'),
-    #                            max_length=150,
-    #                            blank=False,
-    #                            null=False)
-
-    # city = models.CharField(_('City'),
-    #                             max_length=100,
-    #                             blank=False,
-    #                             null=False)
-    # country = models.CharField(
-    #     _('Country'), max_length=100, blank=False, null=False)
-
+    password = models.CharField(max_length=100)
+   
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()
+    ordering = ('created',)
 
-    def __str__(self):
+    def is_staff(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    def get_short_name(self):
         return self.email
 
-
-# Hồ sơ của user. Sprint 1 càng đơn giản càng tốt
-class UserProfile(models.Model):
-    # Foreign key
-    user = models.OneToOneField(get_user_model(), verbose_name=_(
-        "Account"), on_delete=models.CASCADE)
-    # SĐT
-    # phone_number = PhoneNumberField(_("Phone number"))
-    # Địa chỉ. Giờ mới chỉ là VAR CHAR cho đơn giản dể test.
-    # location = models.CharField(max_length=140)
-
-    # Các lựa chọn cho giới tính
-    # class Gender(models.IntegerChoices):
-    #     MALE = 1
-    #     FEMALE = 2
-    #     OTHER = 3
-    #     UNKNOWN = -1
-    # gender = models.IntegerField(choices=Gender.choices)
+    def get_full_name(self):
+        return self.email
 
     def __unicode__(self):
-        return u'Profile of user: %s' % self.user
+        return self.email
 
-# @receiver(post_save, sender=User)
-# def create_or_update_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         UserProfile.objects.create(user=instance)
-#     instance.profile.save()
+    class Meta:
+        db_table = 'User'
 
-# ? Tại sao Product lại ở đây ?
+# class Profile(models.Model):
+#     GENDER = (
+#         ('M', 'Homme'),
+#         ('F', 'Femme'),
+#     )
 
-# class Product(models.Model):
-#     title = models.CharField(max_length=100)
-#     price = models.FloatField()
-#     quantity = models.IntegerField()
-#     # category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
-#     # brand = models.CharField(choices=BRAND_CHOICES, max_length=1)
-#     description = models.TextField()
-#     image = models.ImageField()
+#     user = models.OneToOneField(settings.AUTH_USER_MODEL)
+#     first_name = models.CharField(max_length=120, blank=False)
+#     last_name = models.CharField(max_length=120, blank=False)
+#     gender = models.CharField(max_length=1, choices=GENDER)
+    
 
-#     def __str__(self):
-#         return self.title
-
-#     # @property
-#     # def imageURL(self):
-#     #     try:
-#     #         url = self.image.url
-#     #     except:
-#     #         url = ''
-#     #     return url
+#     def __unicode__(self):
+#         return u'Profile of user: {0}'.format(self.user.email)
 
 
-# class Order(models.Model):
-# 	customer = models.ForeignKey(
-# 	Customer, on_delete=models.SET_NULL, null=True, blank=True)
-# 	order_date = models.DateTimeField(auto_now_add=True)
-# 	complete = models.BooleanField(default=False)
-# 	transaction_id = models.CharField(max_length=100, null=True)
+#     def create_profile(sender, instance, created, **kwargs):
+#         if created:
+#             Profile.objects.create(user=instance)
+#     post_save.connect(create_profile, sender=User)
 
-# 	def __str__(self):
-# 		return str(self.id)
 
-# 	@property
-# 	def shipping(self):
-# 		shipping = False
-# 		orderitems = self.orderitem_set.all()
-# 		for i in orderitems:
-# 			if i.product.digital == False:
-# 				shipping = True
-# 		return shipping
-
-# 	@property
-# 	def get_cart_total(self):
-# 		orderitems = self.orderitem_set.all()
-# 		total = sum([item.get_total for item in orderitems])
-# 		return total
-
-# 	@property
-# 	def get_cart_items(self):
-# 		orderitems = self.orderitem_set.all()
-# 		total = sum([item.quantity for item in orderitems])
-# 		return total
-
-# class OrderItem(models.Model):
-#     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-#     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
-#     quantity = models.IntegerField(default=0, null=True, blank=True)
-#     date_added = models.DateTimeField(auto_now_add=True)
-
-        # @property
-        # def get_total(self):
-        # 	total = self.product.price * self.quantity
-        # 	return total
+#     def delete_user(sender, instance=None, **kwargs):
+#         try:
+#             instance.user
+#         except User.DoesNotExist:
+#             pass
+#         else:
+#             instance.user.delete()
+#     post_delete.connect(delete_user, sender=Profile)

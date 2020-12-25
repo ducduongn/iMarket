@@ -16,8 +16,8 @@ import RamIcon from '../../../icons/RamIcon';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: '100%',
-        maxWidth: 360,
+        // width: '100%',
+        width: 360,
         backgroundColor: theme.palette.background.paper,
     },
     nested: {
