@@ -13,8 +13,9 @@ pylint-django = "*"
 mysqlclient = "*"
 django = "==3.1.4"
 django-filter = "*"
-six = "*"
+django-credit-cards = "*"
 djangorestframework-jwt = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.8"
