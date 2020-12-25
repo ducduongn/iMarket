@@ -84,7 +84,7 @@ class Tag(models.Model):
 class ProductTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
+    value_index = models.PositiveIntegerField(_("value index"))
 class Order(models.Model):
     customer = models.ForeignKey(User, related_name= 'orders', null=True, on_delete=models.CASCADE)
     owner = models.ForeignKey(User, related_name= 'orderList', null=True, on_delete=models.CASCADE)
