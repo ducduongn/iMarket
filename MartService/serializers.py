@@ -1,5 +1,5 @@
 from account.models import User
-from MartService.models import Brand, Cart, CartItem, Category, Order, Payment, Product, ShipProfile
+from MartService.models import  Cart, CartItem, Category, Order, Payment, Product, ShipProfile
 
 from rest_framework import serializers
 

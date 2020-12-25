@@ -6,6 +6,7 @@ from decimal import Decimal
 from django.core.validators import int_list_validator
 from django.contrib.auth import get_user_model
 
+from phonenumber_field.modelfields import PhoneNumberField
 #--------------------------------Product-----------------------------
 
 class Shop(models.Model):
@@ -13,24 +14,25 @@ class Shop(models.Model):
     class ShopStatus(models.IntegerChoices):
         ACTIVE = 1, 'Actice'
         INACTIVE = 0, 'Inactive'
-    shop_status = models.IntegerChoices(default=ShopStatus.INACTIVE, choices=ShopStatus.choices)
+    shop_status = models.SmallIntegerField(default=ShopStatus.INACTIVE, choices=ShopStatus.choices)
 
 class Product(models.Model):
     # ids
     shop = models.ForeignKey("Shop", related_name= 'products',on_delete=models.CASCADE)
     # des info
     name = models.CharField(_('Product name'),max_length=50, blank=False)
-    brand = models.ForeignKey(Brand, related_name='product', on_delete=models.CASCADE)
+    brand = models.CharField(_("Brand"), max_length=50)
 
     # numbers
     quantity_in_stock = models.PositiveIntegerField()
     description = models.CharField(_('Description'), max_length=200, blank=False)
     active = models.BooleanField()
+
+    ctime = models.DateField(_("Created at"), auto_now=True)
+    uptime = models.DateField(_("Updated at"), auto_now=True)
     class Meta:
         db_table = "product"
-    
-    def __str__(self):
-        return self.productName
+
 
 
 class Rating(models.Model):
@@ -77,7 +79,7 @@ class Category(models.Model):
         return self.categoryName
 
 class Tag(models.Model):
-    category = models.ForeignKey(Category, related_name="tags", on_delete=True)
+    category = models.ForeignKey(Category, related_name="tags", on_delete=models.CASCADE)
     name = models.CharField(verbose_name="Tag name", max_length=50)
     values = models.CharField(verbose_name="Values", max_length=50)
     products = models.ManyToManyField(Product, through='ProductTag')
@@ -90,7 +92,8 @@ class ProductTag(models.Model):
 # ----------------------------Order----------------------------
 class Cart(models.Model):
     customer = models.OneToOneField(User, related_name= 'cart', on_delete=models.CASCADE, primary_key=True)
-    created_at = models.DateField(_("Created at"), auto_now=True, auto_now_add=True)
+    ctime = models.DateField(_("Created at"), auto_now=True)
+    uptime = models.DateField(_("Updated at"), auto_now=True)
     class Meta:
         db_table = "cart"
 
@@ -107,7 +110,7 @@ class ShipProfile(models.Model):
     firstname = models.CharField(_("First Name"), max_length=50)
     lastname = models.CharField(_("Last Name"), max_length=50)
     address = models.CharField(_("Address"), max_length=50)
-    phonenumber = models.PhoneNumberField(_("Phone number"))
+    phonenumber = PhoneNumberField(_("Phone number"))
 
 class Payment(models.Model):
     name = models.CharField(_("Name on card"), max_length=50)
@@ -119,6 +122,9 @@ class Order(models.Model):
     shop = models.ForeignKey("Shop", related_name= 'orderList', null=True, on_delete=models.CASCADE)
     ship_profile = models.ForeignKey("ShipProfile", related_name='orders', null=True, on_delete=models.CASCADE)
     
+    ctime = models.DateField(_("Created at"), auto_now=True)
+    uptime = models.DateField(_("Updated at"), auto_now=True)
+
     # Payment
     class PaymentMethod(models.IntegerChoices):
         BANK = 1, _('Transfer')
@@ -142,7 +148,7 @@ class Order(models.Model):
         SHOP_UNCONFIRMED = -1 # Shop không confirm
         CANCELED_BEFORE_CONFIRM = -2 # Cancel trước khi shop confirm
         CANCELED_AFTER_CONFIRM = -3 # Cancel sau khi shop confirm
-        NOSHOW = -3 # Khách không nhận
+        NOSHOW = -4 # Khách không nhận
     status = models.SmallIntegerField(_("Status"), choices=Status.choices)
     
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))

@@ -16,6 +16,7 @@ django-filter = "*"
 django-credit-cards = "*"
 djangorestframework-jwt = "*"
 django-extensions = "*"
+django-phonenumber-field = {extras = ["phonenumberslite"],version = "*"}
 
 [requires]
 python_version = "3.8"
