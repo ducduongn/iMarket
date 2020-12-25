@@ -5,40 +5,36 @@ from leadmanager.settings import AUTH_USER_MODEL as User
 from decimal import Decimal
 from django.core.validators import int_list_validator
 
+#--------------------------------Product-----------------------------
+
 class Shop(models.Model):
-    shopname = models.CharField(_("Shop Name"), max_length=100, blank=False)
-
-class Brand(models.Model):
-    companyName = models.CharField(_('Company name'),max_length=50, blank=False)
-    description = models.CharField(_('Description'), max_length=200, blank=False)
-    address = models.CharField(max_length=140, null=False)
-    country = models.CharField(max_length=50, null= False)
-
-    class Meta:
-        db_table = "brand"
-
-    def __str__(self):
-        return self.companyName
+    shop_name = models.CharField(_("Shop Name"), max_length=100, blank=False)
+    class ShopStatus(models.IntegerChoices):
+        ACTIVE = 1, 'Actice'
+        INACTIVE = 0, 'Inactive'
+    shop_status = models.IntegerChoices(default=ShopStatus.INACTIVE, choices=ShopStatus.choices)
 
 class Product(models.Model):
     # ids
-    shopid = models.ForeignKey("Shop", related_name= 'products',on_delete=models.CASCADE)
+    shop = models.ForeignKey("Shop", related_name= 'products',on_delete=models.CASCADE)
     # des info
     name = models.CharField(_('Product name'),max_length=50, blank=False)
     brand = models.ForeignKey(Brand, related_name='product', on_delete=models.CASCADE)
 
     # numbers
-    quantityInStock = models.PositiveIntegerField()
+    quantity_in_stock = models.PositiveIntegerField()
     description = models.CharField(_('Description'), max_length=200, blank=False)
+    active = models.BooleanField()
     class Meta:
         db_table = "product"
     
     def __str__(self):
         return self.productName
 
+
 class Rating(models.Model):
-    itemid = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
-    rating = models.FloatField(_("Rrating"))
+    product = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
+    rating = models.FloatField(_("Rating"))
     count1 = models.IntegerField(_("Count 1 star"))
     count2 = models.IntegerField(_("Count 2 star"))
     count3 = models.IntegerField(_("Count 3 star"))
@@ -47,17 +43,18 @@ class Rating(models.Model):
 
 class TierVariation(models.Model):
     #ids
-    itemid = models.ForeignKey("Product", verbose_name=_("Product"), on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", verbose_name=_("Product"), on_delete=models.CASCADE)
     tier_order = models.IntegerField(_("Tier Order"))
     name = models.CharField(_("Tier Name"), max_length=50)
     numopt = models.IntegerField(_("Number of Options"))
     options = models.CharField(_("Options"), max_length=100)
     # black, blue - mau 
     # nhom, nhua - chat lieu
+
 class ProductModel(models.Model):
     # black, nhom
     #ids
-    itemid = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", verbose_name=_(""), on_delete=models.CASCADE)
     tier_indexs = models.CharField(_("Tier Indexs"), max_length=50, validators=[int_list_validator])
 
     #prices
@@ -78,6 +75,15 @@ class Category(models.Model):
     def __str__(self):
         return self.categoryName
 
+class Tag(models.Model):
+    category = models.ForeignKey(Category, related_name="tags", on_delete=True)
+    name = models.CharField(verbose_name="Tag name", max_length=50)
+    values = models.CharField(verbose_name="Values", max_length=50)
+    products = models.ManyToManyField(Product, through='ProductTag')
+
+class ProductTag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
 class Order(models.Model):
     customer = models.ForeignKey(User, related_name= 'orders', null=True, on_delete=models.CASCADE)
@@ -103,20 +109,6 @@ class OrderDetails(models.Model):
     class Meta:
         db_table = "orderDetail"
 
-
-class OptionAvailables(models.Model):
-    name = models.CharField(_('Category Name'),max_length=50, null=False)
-    
-    class Meta:
-        db_table = "optionAvailables"
-
-class OptionValues(models.Model):
-    value = models.CharField(_('Value'),max_length=50, blank=False)
-    text = models.CharField(_('Text'),max_length=60, blank=False)
-    optionAvailables = models.ForeignKey(OptionAvailables, related_name='optionValues',on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "optionValues"
 
 class Cart(models.Model):
     customer = models.OneToOneField(User, related_name= 'cart', on_delete=models.CASCADE, primary_key=True)
