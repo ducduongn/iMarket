@@ -22,7 +22,7 @@ class Product(models.Model):
     # des info
     name = models.CharField(_('Product name'),max_length=50, blank=False)
     brand = models.CharField(_("Brand"), max_length=50)
-
+    category = models.ForeignKey("Category", verbose_name=_("Category"), related_name='products', on_delete=models.SET_NULL, null=True)
     # numbers
     quantity_in_stock = models.PositiveIntegerField()
     description = models.CharField(_('Description'), max_length=200, blank=False)
@@ -30,6 +30,10 @@ class Product(models.Model):
 
     ctime = models.DateField(_("Created at"), auto_now=True)
     uptime = models.DateField(_("Updated at"), auto_now=True)
+
+    #dev only
+    image = models.ImageField()
+    
     class Meta:
         db_table = "product"
 
@@ -68,15 +72,12 @@ class ProductModel(models.Model):
     stock = models.IntegerField(_("Number in Stock"))
 
 class Category(models.Model):
-    categoryName = models.CharField(_('Category name'),max_length=50, blank=False)
-    description = models.CharField(_('Description'), max_length=200, blank=False)
-    products = models.ManyToManyField('Product')
-
-    class Meta:
-        db_table = "category"
+    name = models.CharField(_('Category Name'),max_length=50, unique=True, blank=False)
+    description = models.CharField(_('Description'), max_length=200, blank=True)
+    parent = models.ForeignKey('Category', verbose_name=_('Parent Category'), null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.categoryName
+        return self.name
 
 class Tag(models.Model):
     category = models.ForeignKey(Category, related_name="tags", on_delete=models.CASCADE)

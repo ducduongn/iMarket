@@ -1,7 +1,7 @@
 from django.conf import settings
 import os
 
-from customer.models import Category
+from MartService.models import Category
 import json
 
 DATA_DIR = os.path.join(settings.BASE_DIR, 'static/testdata')

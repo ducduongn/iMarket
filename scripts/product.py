@@ -1,4 +1,4 @@
-from customer.models import Product, Category
+from MartService.models import Product, Category
 from .utils import load_json
 
 products = load_json('product_list.json')

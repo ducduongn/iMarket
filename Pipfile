@@ -19,6 +19,7 @@ django-extensions = "*"
 django-phonenumber-field = {extras = ["phonenumberslite"],version = "*"}
 djangorestframework-simplejwt = "*"
 requests = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"

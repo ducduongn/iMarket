@@ -1,4 +1,4 @@
-from customer.models import Category
+from MartService.models import Category
 from .utils import load_json
 
 category = load_json('imarket_category.json')
