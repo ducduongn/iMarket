@@ -45,12 +45,12 @@ def recur_buid_cate_tree(o, parents, children):
 
 
 def buid_cate_tree():
-    # js = get_json(13030)
+    js = get_json(13030)
     parents = {}
     children = {}
-    # interest_cat = [o['catid'] for o in js['facets']] + [13065,
-    #                                                      13067, 13069, 13077, 13079, 13083, 13081, 13086, 14318, 16671, 13186]
-    interest_cat = [13186, ]
+    interest_cat = [o['catid'] for o in js['facets']] + [13065,
+                                                         13067, 13069, 13077, 13079, 13083, 13081, 13086, 14318, 16671, 13186]
+    # interest_cat = []
     print(interest_cat)
     for cid in interest_cat:
         jf = get_json(cid)
