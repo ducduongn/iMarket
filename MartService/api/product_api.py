@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.filters import SearchFilter, OrderingFilter
 from MartService.permission import IsOwnerOrReadOnly
 
 from rest_framework import filters
@@ -19,33 +20,42 @@ DELETE_SUCCESS = 'deleted'
 UPDATE_SUCCESS = 'updated'
 CREATE_SUCCESS = 'created'
 
-class ProductView(generics.ListCreateAPIView):
-    permission_classes = [IsOwnerOrReadOnly]
-    http_method_names = ['get', 'post', "update"]
+class ProductList(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    # permission_classes = [IsOwnerOrReadOnly]
 
     serializer_class = ProductSerializer
-
-    def get_queryset(self):
-        return Product.objects.all()
-
-    def get_detail(self, request, pk):
-        product = Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
     
-    def create(self, request, *args, **kwargs):
-        serializer = ProductSerializer(data=request.data)
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['name', 'brand', 'shop__name']
+    ordering_fields = ['name', 'brand', "ctime"]
 
-        if serializer.is_valid():
-            serializer.save()
+class ProductDetail(generics.RetrieveUpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    
 
-            return JsonResponse({
-                'message': 'Create a new Product successful!'
-            }, status=status.HTTP_201_CREATED)
+    # def get_queryset(self):
+    #     return Product.objects.all()
 
-        return JsonResponse({
-            'message': 'Create a new Product unsuccessful!'
-        }, status=status.HTTP_400_BAD_REQUEST)
+    # def get_detail(self, request, pk):
+    #     product = Product.objects.get(pk=pk)
+    #     serializer = ProductSerializer(product)
+    #     return Response(serializer.data)
+    
+    # def create(self, request, *args, **kwargs):
+    #     serializer = ProductSerializer(data=request.data)
+
+    #     if serializer.is_valid():
+    #         serializer.save()
+
+    #         return JsonResponse({
+    #             'message': 'Create a new Product successful!'
+    #         }, status=status.HTTP_201_CREATED)
+
+    #     return JsonResponse({
+    #         'message': 'Create a new Product unsuccessful!'
+    #     }, status=status.HTTP_400_BAD_REQUEST)
     
 
     
@@ -89,27 +99,6 @@ class ProductView(generics.ListCreateAPIView):
     #             serializer.save()
     #             return Response(serializer.data, status=status.HTTP_201_CREATED)
     #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ProductList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    
-    def list(self, request, *arg, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = MartSerializer.ProductSerializer(queryset, many=True)
-        return Response(serializer.data) 
-    
-    def get_queryset(self):
-        owner = self.request.owner
-        return Product.objects.filter(owner=owner)
-
-class ProductSearchList(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = MartSerializer.ProductSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name', 'brand', 'category']
 
 
 

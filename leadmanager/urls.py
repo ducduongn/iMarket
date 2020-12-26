@@ -25,7 +25,7 @@ urlpatterns = [
     path('', include('frontend.urls')),
 
     path('api/v1/account/', include("account.api_urls")),
-    path('api/vi/martService/', include("MartService.api_urls")),
+    path('api/v1/martService/', include("MartService.api_urls")),
 ]
 
 if settings.DEBUG:

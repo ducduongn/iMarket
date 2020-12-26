@@ -62,7 +62,7 @@ class Product(models.Model):
     oldprice = models.IntegerField(_("Price before discount"))
     # dev only
     image = models.ImageField(
-        _("Overview Image"), upload_to='images/', storage=DontCreateIfExistStorage())
+        _("Overview Image"), upload_to='images/', storage=DontCreateIfExistStorage(), default="")
 
     class Meta:
         db_table = "product"
@@ -174,8 +174,8 @@ class ProductModel(models.Model):
 
 
 class Category(models.Model):
-    cartid = models.AutoField(primary_key=True, default="Cart")
-    name = models.CharField(_('Category Name'), max_length=50, blank=False)
+    cartid = models.AutoField(primary_key=True, default="")
+    name = models.CharField(_('Category Name'), max_length=50, default="")
     description = models.CharField(
         _('Description'), max_length=200, blank=True)
     parent = models.ForeignKey('Category', verbose_name=_(
@@ -199,7 +199,7 @@ class Category(models.Model):
 
 class Tag(models.Model):
     category = models.ForeignKey(
-        Category, related_python manage.py="tags", on_delete=models.CASCADE)
+        Category, related_name ="tags", on_delete=models.CASCADE)
     name = models.CharField(verbose_name="Tag name", max_length=50)
     values = models.CharField(verbose_name="Values", max_length=50)
     products = models.ManyToManyField(Product, through='ProductTag')
@@ -210,8 +210,7 @@ class ProductTag(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     value_index = models.PositiveIntegerField(_("value index"))
 
-# ----------------------------Order----------------------------
-
+# ----------------------------Order--------------------------- 
 
 class Cart(models.Model):
     customer = models.OneToOneField(
