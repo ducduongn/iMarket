@@ -1,16 +1,20 @@
 import axios from 'axios';
 import { PRODUCT_DETAIL, PDType } from '../../objects/ProductDetail';
 import { ProductOverviewType } from '../../Pages/Shopping/components/home/ProductListSection';
+import { ProductCardView, ProductListApiResponse, ProductResponse } from './product.d';
 
-export function get_products(onSuccess: (data: ProductOverviewType) => unknown): void {
+// ---------------------- Transform Functions ----------------------------
+export function prod2prodCardView(prod: ProductResponse): ProductCardView {
+    const { name, image, rating, oldprice, models } = prod;
+    const res = { name, image, price: Math.min(...models.map((m) => m.price)), rating_star: rating.rating_star };
+    if (oldprice > 0) res['oldprice'] = oldprice;
+    return res;
+}
+
+export function api_get_productList(onSuccess: (data: ProductCardView[]) => unknown): void {
     axios.get('/api/vi/martService/products/').then((res) => {
-        const data = res.data;
-        const plist = data.results.map((p) => ({
-            name: p.name,
-            image: p.image,
-            price: p.productmodel_set[0].price / 10000,
-            compare: p.oldprice,
-        }));
+        const data: ProductListApiResponse = res.data;
+        const plist = data.results.map((pRes) => prod2prodCardView(pRes));
         onSuccess(plist);
     });
 }

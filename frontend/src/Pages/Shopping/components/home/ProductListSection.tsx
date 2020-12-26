@@ -11,8 +11,7 @@ import { sectionHeaderStyles, SectionStyles } from '../Styles';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 import PriceFeature from '../shared/PriceFeature';
 import { Link } from 'react-router-dom';
-
-export type ProductOverviewType = { name: string; image: string; price: number; compare?: number };
+import { ProductCardView } from '../../../../redux/product/product.d';
 
 const productCardStyle = () =>
     createStyles({
@@ -46,9 +45,9 @@ const productCardStyle = () =>
         },
     });
 
-export type ProductCardProps = { classes: ClassNameMap<string> } & ProductOverviewType;
+export type ProductCardProps = { classes: ClassNameMap<string> } & ProductCardView;
 export const ProductCard = withStyles(productCardStyle)(
-    ({ classes, name, image, price, compare }: ProductCardProps): JSX.Element => {
+    ({ classes, name, image, price, oldprice }: ProductCardProps): JSX.Element => {
         return (
             <Card className={classes.root} color="secondary">
                 {/* <CardActionArea> */}
@@ -69,7 +68,7 @@ export const ProductCard = withStyles(productCardStyle)(
                         </Typography>
                         <Rating className={classes.rating} readOnly value={4} size="small" />
                         <div className={classes.contentWrapper}>
-                            <PriceFeature card price={price} comparePrice={compare} unit="₫" />
+                            <PriceFeature card price={price} comparePrice={oldprice} unit="₫" />
                         </div>
                     </CardContent>
                 </Link>
@@ -80,7 +79,7 @@ export const ProductCard = withStyles(productCardStyle)(
     },
 );
 
-function ProductListSection(props: { title: string; productList: Array<ProductOverviewType> }): JSX.Element {
+function ProductListSection(props: { title: string; productList: Array<ProductCardView> }): JSX.Element {
     const { title, productList } = props;
     return (
         <Section classes={SectionStyles()}>
