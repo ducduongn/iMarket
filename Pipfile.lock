@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "91cef7955d885c4a31bd635c3601a4de47461a206d582d1795a2e77ad84fd071"
+            "sha256": "a47b6a4db7ee717f3ccfb468fbe1d0750b00448aa33c2b66da05acd183eb5208"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -88,6 +88,12 @@
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==4.0.0"
         },
+        "cloudinary": {
+            "hashes": [
+                "sha256:79a903b59a95e66076adffa4e848aa41e2d41f33edad2b2233b158597cc8f372"
+            ],
+            "version": "==1.24.0"
+        },
         "cryptography": {
             "hashes": [
                 "sha256:0003a52a123602e1acee177dc90dd201f9bb1e73f24a070db7d36c588e8f5c7d",
@@ -115,6 +121,14 @@
             ],
             "index": "pypi",
             "version": "==3.1.4"
+        },
+        "django-cloudinary-storage": {
+            "hashes": [
+                "sha256:95c855c7334141b2a485ea7eb5716de87bb6ce0d848e205debb3a3ab7bbbd49a",
+                "sha256:debd403a5f225c9d35c4af508ff4abc7fdc262129464134b60b2feeb2c44d3e1"
+            ],
+            "index": "pypi",
+            "version": "==0.3.0"
         },
         "django-credit-cards": {
             "hashes": [
@@ -159,6 +173,13 @@
             ],
             "index": "pypi",
             "version": "==4.1.0"
+        },
+        "django-unixdatetimefield": {
+            "hashes": [
+                "sha256:809614c3b65caf3f0cbb40ec3d5efab13ccd01c556e00426dc01b67f03fcbf9d"
+            ],
+            "index": "pypi",
+            "version": "==1.2.0"
         },
         "djangorestframework": {
             "hashes": [

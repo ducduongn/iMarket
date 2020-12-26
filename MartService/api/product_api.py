@@ -106,10 +106,10 @@ class ProductList(generics.ListAPIView):
         return Product.objects.filter(owner=owner)
 
 class ProductSearchList(generics.ListAPIView):
-    queryset = User.objects.all()
+    queryset = Product.objects.all()
     serializer_class = MartSerializer.ProductSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['productName', 'brand', 'category']
+    search_fields = ['name', 'brand', 'category']
 
 
 

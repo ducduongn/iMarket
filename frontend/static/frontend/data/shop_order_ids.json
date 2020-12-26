@@ -1,0 +1,43 @@
+{
+	"shop_order_ids": [
+		{
+			"shopid": 60833509,
+			"item_briefs": [
+				{
+					"itemid": 2070393146,
+					"modelid": 3732349297,
+					"item_group_id": null,
+					"quantity": 1
+				}
+			]
+		},
+		{
+			"shopid": 165498337,
+			"item_briefs": [
+				{
+					"itemid": 5808719461,
+					"modelid": 52105184111,
+					"item_group_id": null,
+					"quantity": 1
+				}
+			]
+		},
+		{
+			"shopid": 88201679,
+			"item_briefs": [
+				{
+					"itemid": 6660601659,
+					"modelid": 61642010370,
+					"item_group_id": null,
+					"quantity": 1
+				},
+				{
+					"itemid": 3355877166,
+					"modelid": 61560011521,
+					"item_group_id": null,
+					"quantity": 7
+				}
+			]
+		}
+	]
+}
