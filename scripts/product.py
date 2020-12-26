@@ -68,23 +68,7 @@ def add_product_by_dict(d):
     # print(d)
     itemid = d['itemid']
     if Product.objects.filter(pk=itemid): return
-    catid = next(filter(lambda x: x['no_sub'], d['categories']))['catid']
-    print(catid)
-    pparam = {
-        "pk": itemid,
-        "name": d['name'],
-        "brand": d['brand'],
-        "category": Category.objects.get(pk=catid),
-        "quantity_in_stock": d['stock'],
-        "description": d['description'],
-        "active": True,
-        "oldprice": d['price_before_discount'],
-        "ctime":datetime.utcfromtimestamp(int(d['ctime'])),
-        "stock": d['stock'],
-        "shop": get_or_add_shop(d['shopid']),
-    }
-    print(pparam['brand'])
-    product = Product(**pparam)
+    product = Product.spcreate(get_or_add_shop(d['shopid']), **d)
     # img = Image.open(img) # Creates an instance of PIL Image class - PIL does the verification of file
     # img_copy = copy.copy(img) # Verify the copied image, not original - verification requires you to open the image again after verification, but since we don't have the file saved yet we won't be able to. This is because once we read() urllib2.urlopen we can't access the response again without remaking the request (i.e. downloading the image again). Rather than do that, we duplicate the PIL Image in memory.
     # img_copy.save('test2.jpeg')
@@ -103,35 +87,20 @@ def add_product_by_dict(d):
     tiers = []
     models = []
     for i, t in enumerate(d['tier_variations']):
-        t_param = {
-            "name": t['name'],
-            "options": ','.join(t['options']),
-            "tier_order": i,
-            "numopt": len(t['options']),
-        }
-
-        tiers.append(TierVariation(product=product, **t_param))
+        t = TierVariation.spcreate(i, product, **t)
+        if t is not None: 
+            tiers.append(t)
+        else:
+            try:
+                assert len(d['tier_variations']) == 1
+            except AssertionError as e:
+                print(d['tier_variations'])
+                raise e
     for m in d['models']:
-        m_param = {
-            "product": product,
-            "tier_indexs": ','.join([str(i) for i in m['extinfo']['tier_index']]),
-            "price": m['price'],
-            "stock": m['stock'],
-            'sold': m['sold'],
-        }
-        models.append(ProductModel(pk=m['modelid'], **m_param))
-    drating = d['item_rating']
-    drating_count = drating['rating_count']
-    rating_params = {
-        "rating": drating['rating_star'],
-        'count1': drating_count[0],
-        'count2': drating_count[1],
-        'count3': drating_count[2],
-        'count4': drating_count[3],
-        'count5': drating_count[4],
-        'product': product
-    }
-    rating = Rating(**rating_params)
+        if len(tiers) == 0:
+            m['tier_index'] = -1
+        models.append(ProductModel.spcreate(m['modelid'], product, **m))
+    rating = Rating.spcreate(product, **d['item_rating'])
     product.save()
     for t in tiers:
         t.save()

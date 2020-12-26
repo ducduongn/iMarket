@@ -1,6 +1,6 @@
 from account.models import User
 from MartService.models import Cart, CartItem, Category, Order, Payment, Product, ProductModel, Rating, ShipProfile, Shop, TierVariation
-
+from . import fields
 from rest_framework import serializers
 
 class ShopSerializer(serializers.ModelSerializer):
@@ -9,11 +9,13 @@ class ShopSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TierVariationSerializer(serializers.ModelSerializer):
+    options = fields.StringSplitArrayField()
     class Meta:
         model = TierVariation
         fields = [field.name for field in model._meta.fields if field.name != 'product']
 
 class ModelVaritationSerializer(serializers.ModelSerializer):
+    tier_index = fields.StringSplitArrayField(transform_func=int)
     class Meta:
         model = ProductModel
         fields = [field.name for field in model._meta.fields if field.name != 'product']
@@ -26,13 +28,13 @@ class RatingSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     # shop = serializers.ReadOnlyField(source = 'user.email')
     shop = ShopSerializer()
-    tiervariation_set = TierVariationSerializer(many=True)
-    productmodel_set = ModelVaritationSerializer(many=True)
+    variations = TierVariationSerializer(many=True)
+    models = ModelVaritationSerializer(many=True)
     rating = RatingSerializer()
+
     class Meta:
         model = Product
-        fields = [field.name for field in model._meta.fields] + ['shop', 'rating', 'tiervariation_set', 'productmodel_set']
-        
+        fields = [field.name for field in model._meta.fields] + ['shop', 'rating', 'variations', 'models']
         
 
 

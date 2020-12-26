@@ -1,0 +1,65 @@
+{
+    "name": "Laptop MSI Gaming GS66 Stealth 10SE (407VN)",
+    "rating": 4,
+    "brand": "MSI",
+    "numRating": 46,
+    "unit": "₫",
+    "gift": "$60 Apple Music gift card with purchase of select Beats products.",
+    "description": "(i7 10750H 16GB RAM/512GB SSD/RTX2060 6G/15.6 inch FHD 240Hz/Win 10)",
+    "optionAvailables": [
+        {
+            "name": "Màu sắc",
+            "values": [
+                { "value": "default", "text": "default" },
+                { "value": "black", "text": "Màu đen" },
+                { "value": "blue", "text": "Màu xanh" }
+            ],
+            "id": "op01"
+        },
+        {
+            "name": "Chất liệu",
+            "values": [
+                { "value": "default", "text": "default" },
+                { "value": "aluminum", "text": "nhôm" },
+                { "value": "plastic", "text": "nhựa" }
+            ],
+            "id": "op02"
+        }
+    ],
+    "defaultOption": "black",
+    "comparePrice": 43029000,
+    "options": {
+        "default": { "text": "default", "price": -1, "maxPrice": -1, "availableQuantity": -1, "shop": "shop01" },
+        "blue, plastic": {
+            "images": [],
+            "price": 38052000,
+            "availableQuantity": 23,
+            "shop": "shop01",
+            "othersShop": ["shop01", "shop02"]
+        },
+        "black, plastic": {
+            "images": [],
+            "price": 37052000,
+            "availableQuantity": 0,
+            "shop": "shop02",
+            "othersShop": ["shop03", "shop02"]
+        },
+        "black, aluminum": {
+            "images": [],
+            "price": 37052000,
+            "availableQuantity": 23,
+            "shop": "shop02",
+            "othersShop": ["shop03", "shop02"]
+        },
+        "blue, aluminum": {
+            "images": [],
+            "price": 37052000,
+            "availableQuantity": 23,
+            "shop": "shop02",
+            "othersShop": ["shop03", "shop02"]
+        }
+    }
+}
+
+// update
+{"action_type":1,"updated_shop_order_ids":[{"shopid":88201679,"item_briefs":[{"shopid":88201679,"itemid":3355877166,"modelid":61560011521,"item_group_id":null,"add_on_deal_id":null,"is_add_on_sub_item":null,"quantity":10,"old_modelid":null,"old_quantity":7,"checkout":false,"applied_promotion_id":1089467189,"price":225000000000}]}],"selected_shop_order_ids":[{"shopid":88201679,"item_briefs":[],"addin_time":1608643724,"auto_apply":true,"shop_vouchers":[]}],"promotion_data":{"use_coins":false,"platform_vouchers":[],"free_shipping_voucher_info":{"free_shipping_voucher_id":0}}}

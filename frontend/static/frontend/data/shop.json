@@ -1,0 +1,32 @@
+{
+	"data": {
+		"shop_categories": [
+			{
+				"shop_category_id": 42462113,
+				"display_name": "AMAZING SHOES",
+				"image": "fb86ce7982d0cadf701c61fee03ae4b0",
+				"is_generated": false,
+				"category_type": 1,
+				"rcmd_info": "QUE:SC2,SLT:shop_page_categories_slot,PID:11,TFS:shop_page_categories_slot_VN,SEC:shop_page_categories_sec,BNDOPT:shop_page_categories,BND:shop_page_categories,EPT:shop_page_categories"
+			},
+			{
+				"shop_category_id": 45375518,
+				"display_name": "YZ SLIDE SF - DAS",
+				"image": "8fc19747ea08c4570befef54d48e9fb6",
+				"is_generated": false,
+				"category_type": 1,
+				"rcmd_info": "QUE:SC2,SLT:shop_page_categories_slot,PID:11,TFS:shop_page_categories_slot_VN,SEC:shop_page_categories_sec,BNDOPT:shop_page_categories,BND:shop_page_categories,EPT:shop_page_categories"
+			},
+			{
+				"shop_category_id": 10329099,
+				"display_name": "Sandal - quai hậu",
+				"image": "614325e95dafec35a3f8323fed891803",
+				"is_generated": false,
+				"category_type": 1,
+				"rcmd_info": "QUE:SC2,SLT:shop_page_categories_slot,PID:11,TFS:shop_page_categories_slot_VN,SEC:shop_page_categories_sec,BNDOPT:shop_page_categories,BND:shop_page_categories,EPT:shop_page_categories"
+			}
+		],
+		"total": 3,
+		"has_more": false
+	}
+}

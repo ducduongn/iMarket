@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'leads',
     'account',
     'MartService',
+    'frontend',
 
     'django_extensions',  # Để chạy script tạo data cho CSDL (Dev only)
     # 'rest_framework_filters', # filtering function

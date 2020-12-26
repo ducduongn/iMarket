@@ -40,14 +40,9 @@ def get_json(shopid):
 
 def add_shop_by_dict(d, save=True):
     shopid = d['shopid']
-    if Shop.objects.filter(id=shopid).exists():
-        return Shop.objects.get(id=shopid)
-    shop_name = d['name']
-    description = d['description']
-    rating_good = d['rating_good']
-    ctime = datetime.utcfromtimestamp(int(d['ctime'])) 
-    rating_star = d['rating_star']
-    shop = Shop(pk=shopid, shop_name=shop_name, shop_status=1, rating_star=rating_star, description=description, ctime=ctime)
+    if Shop.objects.filter(pk=shopid).exists():
+        return Shop.objects.get(pk=shopid)
+    shop = Shop.spcreate(**d)
     if save:
         shop.save()
         print('added', shop)

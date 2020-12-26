@@ -1,21 +1,27 @@
 const path = require('path');
-
-
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-	entry: './frontend/src/index.js',
-	output: {
-		filename: 'index.js',
-		path: path.resolve(__dirname,'frontend/static/frontend/')
-	},
+    entry: './frontend/src/index.js',
+    output: {
+        path: path.join(__dirname, './frontend/static/frontend/'),
+        filename: 'index.js'
+    },
+    // adding .ts and .tsx to resolve.extensions will help babel look for .ts and .tsx files to transpile
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js']
+    },
     module: {
         rules: [
+            // Use babel-loader to load jsx and tsx files
             {
-                test: /\.js$/,
+                test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
-                }
+                    loader: 'babel-loader'
+                },
             },
+
+
             {
                 test: /\.(scss|css)$/,
                 use: [
