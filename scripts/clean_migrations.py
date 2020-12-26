@@ -12,7 +12,8 @@ def rm_migration_app(app_name):
 
 def run(*arg):
     if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
-        os.remove(settings.DATABASES['default']['NAME'])
+        if os.path.exists(settings.DATABASES['default']['NAME']):
+            os.remove(settings.DATABASES['default']['NAME'])
         rm_migration_app("MartService")
         rm_migration_app("account")
         rm_migration_app("frontend")
