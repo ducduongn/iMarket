@@ -91,7 +91,7 @@ class ProductView(generics.ListCreateAPIView):
     #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProductList(generics.ListAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def list(self, request, *arg, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

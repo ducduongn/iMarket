@@ -157,3 +157,13 @@ class Order(models.Model):
     class Meta:
         db_table = "order"
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, related_name= 'userProfile', on_delete=models.CASCADE, primary_key=True)
+    address = models.CharField(_("Address"), max_length=50)
+    class Gender(models.IntegerChoices):
+        MALE = 1, _('Male')
+        FEMALE = 2, _('Female')
+        NONE = 3, _('None')
+    gender = models.SmallIntegerField(_("Gender"), choices=Gender.choices)
+    phone = PhoneNumberField(_("Phone"))
+    birthdate = models.DateField(_("Birth date"), auto_now=False, auto_now_add=False)
