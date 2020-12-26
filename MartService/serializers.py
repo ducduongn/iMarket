@@ -21,9 +21,13 @@ class ModelVaritationSerializer(serializers.ModelSerializer):
         fields = [field.name for field in model._meta.fields if field.name != 'product']
 
 class RatingSerializer(serializers.ModelSerializer):
+    rating_count = serializers.SerializerMethodField()
     class Meta:
         model = Rating
-        fields = [field.name for field in model._meta.fields if field.name != 'product']
+        fields = ['rating_star', 'rating_count']
+
+    def get_rating_count(self, obj):
+        return [obj.count1, obj.count2, obj.count3, obj.count4, obj.count5]
 
 class ProductSerializer(serializers.ModelSerializer):
     # shop = serializers.ReadOnlyField(source = 'user.email')
