@@ -1,5 +1,5 @@
 import React, { Dispatch, Fragment, SetStateAction, useState } from 'react';
-import { Button, Grid, Paper, Typography, Chip, Link, Hidden } from '@material-ui/core';
+import { Button, Grid, Paper, Typography, Chip, Link, Hidden, ButtonProps } from '@material-ui/core';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import NumberPlusMinus from '../../../shared/components/NumberPlusMinus';
@@ -11,6 +11,14 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import PriceFeature, { PriceProps } from '../shared/PriceFeature';
 import { useSnackbar, withSnackbar, WithSnackbar } from '../../../shared/components/SnackbarProvider';
+import { Skeleton } from '@material-ui/lab';
+import {
+    ProductDetailView,
+    ProductModelResponse,
+    TierVariantResponse,
+    TierVariation,
+} from '../../../../redux/product/product.d';
+import { tierInd2model } from '../../../../redux/product/product.manager';
 
 interface HeaderProps {
     name: string;
@@ -46,38 +54,40 @@ function HeaderFeature(props: HeaderProps) {
     );
 }
 
-type OptionSelectionProps<T extends string> = {
-    optionName: string;
-    values: Array<Record<'value' | 'text', string>>;
-    option: T;
-    setOption: Dispatch<SetStateAction<T>>;
+type OptionSelectionProps = {
+    variation: TierVariantResponse;
+    options: Array<number>;
+    setOption: Dispatch<SetStateAction<number[]>>;
 };
-function OptionSelectionFeature<T extends string>(props: OptionSelectionProps<T>) {
-    const { optionName, values, option, setOption } = props;
-    // const [option, setOption] = useState<string | null>(options[0].value);
-    const handleOption = (event: React.MouseEvent<HTMLElement>, newOption: string | null) => {
-        if (!newOption) {
-            newOption = 'default';
+function OptionSelectionFeature(props: OptionSelectionProps) {
+    const { variation, options, setOption } = props;
+    React.useEffect(() => {
+        console.log('newOption');
+        console.log(options[variation.order_in_tier]);
+    }, [options]);
+
+    const handleOption = (event: React.MouseEvent<HTMLElement>, newOption: number | null) => {
+        if (newOption === null) {
+            newOption = -1;
         }
-        setOption(newOption as T);
+        const newOptions = [...options];
+        newOptions[variation.order_in_tier] = newOption;
+        setOption(newOptions);
     };
     return (
-        <FeatureSubSection title={optionName}>
+        <FeatureSubSection title={variation.name}>
             <ToggleButtonGroup
-                value={option}
+                value={options[variation.order_in_tier]}
                 exclusive
                 size="small"
                 onChange={handleOption}
                 aria-label="text alignment"
             >
-                {values.map(
-                    (i) =>
-                        i.value != 'default' && (
-                            <ToggleButton key={i.value} value={i.value}>
-                                {i.text}
-                            </ToggleButton>
-                        ),
-                )}
+                {variation.options.map((text, i) => (
+                    <ToggleButton key={i} value={i}>
+                        {text}
+                    </ToggleButton>
+                ))}
             </ToggleButtonGroup>
         </FeatureSubSection>
     );
@@ -90,6 +100,7 @@ type QuantitySelectionFeatureProps = {
 };
 function QuantitySelectionFeature(props: QuantitySelectionFeatureProps) {
     const { buyQuantity, availableQuantity, setBuyQuantity } = props;
+
     const text = availableQuantity >= 0 ? `Còn ${availableQuantity} sản phẩm` : `Vui lòng chọn loại sản phẩm`;
     return (
         <FeatureSubSection title="Số lượng" grid>
@@ -115,64 +126,158 @@ function Promotion(): JSX.Element {
         </FeatureSubSection>
     );
 }
-export type ProductSummaryProps<T extends string> = {
-    optionProps?: OptionSelectionProps<T>[];
-    shopProps: ShopSummaryProps;
-    quantityProps: QuantitySelectionFeatureProps;
-} & HeaderProps &
-    PriceProps;
-export default function ProductSummary<T extends string>(props: ProductSummaryProps<T>): JSX.Element {
+
+const AddressInput = (): JSX.Element => {
+    return (
+        <FeatureSubSection>
+            <Typography variant="subtitle2">
+                Bạn hãy <span>NHẬP ĐỊA CHỈ</span> nhận hàng để được dự báo thời gian & chi phí giao hàng một cách chính
+                xác nhất.
+            </Typography>
+        </FeatureSubSection>
+    );
+};
+
+const BuyButton = (props: { availableQuantity?: number } & ButtonProps) => {
+    const { availableQuantity, ...buttonProps } = props;
+    return (
+        <div className="pad-top-divider">
+            <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                color="primary"
+                disabled={availableQuantity != undefined && availableQuantity <= 0}
+                {...buttonProps}
+            >
+                Chọn mua ngay
+            </Button>
+        </div>
+    );
+};
+export type ProductSummaryProps = ProductDetailView & {
+    selectedModel: ProductModelResponse | undefined;
+    selectModel: Dispatch<SetStateAction<ProductModelResponse | undefined>>;
+} & Omit<QuantitySelectionFeatureProps, 'availableQuantity'>;
+export default function ProductSummary(props: ProductSummaryProps): JSX.Element {
     const {
         name,
+        brand,
         rating,
-        numRating,
-        price,
-        maxPrice,
-        comparePrice,
-        unit,
-        optionProps,
-        shopProps,
-        quantityProps,
+        oldprice,
+        models,
+        variations,
+        selectedModel,
+        selectModel,
+        buyQuantity,
+        setBuyQuantity,
     } = props;
+    const [options, setOptions] = useState<number[]>([]);
+    const prices = models.map((m) => m.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
     const snackbar = useSnackbar();
+    React.useEffect(() => {
+        if (options.find((v) => v == -1) === undefined) {
+            selectModel(tierInd2model(options, models));
+        } else {
+            selectModel(undefined);
+        }
+    }, [options]);
     return (
         <Grid item xs={12} md={7} container spacing={1}>
             <Grid item xs={12}>
-                <HeaderFeature name={name} rating={rating} numRating={numRating} brand="MSI" />
+                <HeaderFeature
+                    name={name}
+                    rating={rating.rating_star}
+                    numRating={rating.rating_count.reduce((a, b) => a + b)}
+                    brand={brand}
+                />
             </Grid>
             <Grid container item xs={12} md={12} lg={7}>
                 <Grid item xs={12}>
                     <Paper className={PriceFeatureStyles().root} elevation={0}>
-                        <PriceFeature price={price} comparePrice={comparePrice} unit={unit} maxPrice={maxPrice} />
+                        <PriceFeature
+                            price={selectedModel ? selectedModel.price : minPrice}
+                            comparePrice={oldprice}
+                            unit={'VND'}
+                            maxPrice={selectedModel == undefined ? maxPrice : undefined}
+                        />
                     </Paper>
-                    {optionProps && optionProps.map((v, ind) => <OptionSelectionFeature key={ind} {...v} />)}
+                    {variations.length > 0 &&
+                        variations.map((v, ind) => (
+                            <OptionSelectionFeature key={ind} variation={v} options={options} setOption={setOptions} />
+                        ))}
                     <Promotion />
-                    <FeatureSubSection>
-                        <Typography variant="subtitle2">
-                            Bạn hãy <span>NHẬP ĐỊA CHỈ</span> nhận hàng để được dự báo thời gian & chi phí giao hàng một
-                            cách chính xác nhất.
-                        </Typography>
-                    </FeatureSubSection>
-                    <QuantitySelectionFeature {...quantityProps} />
-                    <div className="pad-top-divider">
-                        <Button
-                            variant="contained"
-                            size="large"
-                            fullWidth
-                            color="primary"
-                            onClick={() => snackbar.info({ text: 'Thêm vào giỏ hàng thành công' })}
-                            disabled={quantityProps.availableQuantity <= 0}
-                        >
-                            Chọn mua ngay
-                        </Button>
-                    </div>
+                    <AddressInput />
+                    <QuantitySelectionFeature
+                        buyQuantity={buyQuantity}
+                        setBuyQuantity={setBuyQuantity}
+                        availableQuantity={selectedModel ? selectedModel.stock : -1}
+                    />
+                    <BuyButton
+                        onClick={() => snackbar.info({ text: 'Added item to cart' })}
+                        availableQuantity={selectedModel ? selectedModel.stock : undefined}
+                    />
                 </Grid>
             </Grid>
-            <Hidden mdDown>
+            {/* <Hidden mdDown>
                 <Grid container item xs={12} lg={5}>
                     <ShopSummary {...shopProps} />
                 </Grid>
-            </Hidden>
+            </Hidden> */}
+        </Grid>
+    );
+}
+
+function QuantitySelectionSkeleton() {
+    return (
+        <Skeleton>
+            <FeatureSubSection title="Số lượng" grid>
+                <Grid item xs={6}>
+                    <NumberPlusMinus value={1} min={0} max={2} />
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography variant="subtitle2" align="right">
+                        {`Vui lòng chọn loại sản phẩm`}
+                    </Typography>
+                </Grid>
+            </FeatureSubSection>
+        </Skeleton>
+    );
+}
+
+export function ProductSummarySkeleton(): JSX.Element {
+    return (
+        <Grid item xs={12} md={7} container spacing={1}>
+            <Grid item xs={12}>
+                <Skeleton width="100%">
+                    <HeaderFeature name={''} rating={0} numRating={0} brand="MSI" />
+                </Skeleton>
+            </Grid>
+            <Grid container item xs={12} md={12} lg={7}>
+                <Grid item xs={12}>
+                    <Paper className={PriceFeatureStyles().root} elevation={0}>
+                        <Skeleton width="100%">
+                            <PriceFeature price={10000} comparePrice={10000} unit={'d'} maxPrice={10000} />
+                        </Skeleton>
+                    </Paper>
+                    {/* {optionProps && optionProps.map((v, ind) => <OptionSelectionFeature key={ind} {...v} />)} */}
+                    <Skeleton>{<Promotion />}</Skeleton>
+                    <Skeleton>
+                        <AddressInput />
+                    </Skeleton>
+                    <QuantitySelectionSkeleton />
+                    <Skeleton>
+                        <BuyButton />
+                    </Skeleton>
+                </Grid>
+            </Grid>
+            {/* <Hidden mdDown>
+                <Grid container item xs={12} lg={5}>
+                    <ShopSummary {...shopProps} />
+                </Grid>
+            </Hidden> */}
         </Grid>
     );
 }

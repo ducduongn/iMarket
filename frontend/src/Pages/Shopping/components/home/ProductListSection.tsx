@@ -12,6 +12,8 @@ import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 import PriceFeature from '../shared/PriceFeature';
 import { Link } from 'react-router-dom';
 import { ProductCardView } from '../../../../redux/product/product.d';
+import { PRODUCT_LIST } from '../../../../objects/ProductDetail';
+import { Skeleton } from '@material-ui/lab';
 
 const productCardStyle = () =>
     createStyles({
@@ -47,17 +49,16 @@ const productCardStyle = () =>
 
 export type ProductCardProps = { classes: ClassNameMap<string> } & ProductCardView;
 export const ProductCard = withStyles(productCardStyle)(
-    ({ classes, name, image, price, oldprice }: ProductCardProps): JSX.Element => {
+    ({ itemid, classes, name, image, price, rating_star, oldprice }: ProductCardProps): JSX.Element => {
         return (
             <Card className={classes.root} color="secondary">
                 {/* <CardActionArea> */}
-                <Link to="/detail">
+                <Link to={`/detail/${itemid}`}>
                     <CardMedia className={classNames(classes.productImage, 'card-image')}>
                         <LazyLoadImage
                             className={classNames('block', 'fitContain', 'fullSize')}
                             width="100%"
                             height="100%"
-                            alt="Headphones"
                             src={image}
                             effect="blur"
                         />
@@ -66,9 +67,40 @@ export const ProductCard = withStyles(productCardStyle)(
                         <Typography gutterBottom variant="h6" noWrap>
                             {name}
                         </Typography>
-                        <Rating className={classes.rating} readOnly value={4} size="small" />
+                        <Rating precision={0.01} className={classes.rating} readOnly value={rating_star} size="small" />
                         <div className={classes.contentWrapper}>
                             <PriceFeature card price={price} comparePrice={oldprice} unit="₫" />
+                        </div>
+                    </CardContent>
+                </Link>
+
+                {/* </CardActionArea> */}
+            </Card>
+        );
+    },
+);
+
+export const ProductCartSkeleton = withStyles(productCardStyle)(
+    ({ classes }: { classes: ClassNameMap<string> }): JSX.Element => {
+        const { itemid, name, image, price, oldprice } = PRODUCT_LIST[0];
+        return (
+            <Card className={classes.root} color="secondary">
+                {/* <CardActionArea> */}
+                <Link to={`/detail/${itemid}`}>
+                    <CardMedia className={classNames(classes.productImage, 'card-image')}>
+                        <Skeleton width="100%" height="100%" />
+                    </CardMedia>
+                    <CardContent>
+                        <Typography gutterBottom variant="h6" noWrap>
+                            <Skeleton />
+                        </Typography>
+                        <Skeleton>
+                            <Rating className={classes.rating} readOnly value={4} size="small" />
+                        </Skeleton>
+                        <div className={classes.contentWrapper}>
+                            <Skeleton>
+                                <PriceFeature card price={price} comparePrice={oldprice} unit="₫" />
+                            </Skeleton>
                         </div>
                     </CardContent>
                 </Link>
@@ -87,10 +119,10 @@ function ProductListSection(props: { title: string; productList: Array<ProductCa
                 {/* <SectionHeaderSubtile variant="h6" text="." /> */}
             </SectionHeader>
             <Grid container spacing={2}>
-                {productList.map((i) => {
+                {productList.map((p, i) => {
                     return (
-                        <Grid key={i.name} item xs={12} sm={6} md={4} lg={3} data-aos="fade-up">
-                            <ProductCard {...i} />
+                        <Grid key={i} item xs={12} sm={6} md={4} lg={3} data-aos="fade-up">
+                            <ProductCard {...p} />
                         </Grid>
                     );
                 })}

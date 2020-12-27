@@ -19,7 +19,7 @@ import {
     Typography,
 } from '@material-ui/core';
 import { ArrowDropDown, CheckBox, MoreHoriz, SearchOutlined, TagFaces } from '@material-ui/icons';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { FILTER_SECTIONS } from '../../../../objects/ProductDetail';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
     },
 }));
-interface ChipData {
+export interface ChipData {
     key: number;
     label: string;
 }
@@ -123,17 +123,19 @@ export function ProductFilterSectionHeading(props: {
         </List>
     );
 }
-function FilterBar(): JSX.Element {
+
+function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetStateAction<ChipData[]>> }): JSX.Element {
+    const { chipData, setChipData } = props;
     const classes = useStyles();
-    const [chipData, setChipData] = React.useState<ChipData[]>([
-        { key: 0, label: 'Angular' },
-        { key: 1, label: 'jQuery' },
-        { key: 2, label: 'Polymer' },
-        { key: 3, label: 'React' },
-        { key: 4, label: 'Vue.js' },
-    ]);
+    // const [chipData, setChipData] = React.useState<ChipData[]>([]);
     const handleDelete = (chipToDelete: ChipData) => () => {
-        setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
+        setChipData(chipData.filter((chip) => chip.key !== chipToDelete.key));
+    };
+    const handleEnterKeyword = (label: string) => {
+        if (chipData.find((o) => o.label.toLowerCase() == label.toLowerCase())) return;
+        const key = Math.max(Math.max(...chipData.map((o) => o.key)) + 1, 0);
+        console.log('key', key);
+        setChipData([...chipData, { key, label }]);
     };
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -151,7 +153,20 @@ function FilterBar(): JSX.Element {
             <Card elevation={1}>
                 <Box className={classes.search}>
                     <SearchOutlined fontSize="small" />
-                    <Input disableUnderline className={classes.inputSearch} fullWidth placeholder="Enter a keyword" />
+                    <Input
+                        disableUnderline
+                        className={classes.inputSearch}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter') {
+                                handleEnterKeyword(e.target.value);
+                                // NOTE: Blur active element to trigger a blur on Enter key press
+                                if (document && document.activeElement) document.activeElement.blur();
+                                e.target.value = '';
+                            }
+                        }}
+                        fullWidth
+                        placeholder="Enter a keyword"
+                    />
                 </Box>
                 <Divider />
                 <Box className={classes.chips}>

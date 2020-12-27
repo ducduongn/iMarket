@@ -72,9 +72,12 @@ export type ProductListApiResponse = {
 
 // ------------------------View Types-------------------------------
 export type ProductCardView = { 
+    itemid: number;
     name: string; 
     image: string; 
     price: number; 
     rating_star: number;
-    oldprice?: number 
+    oldprice: number | undefined; 
 };
+
+export type ProductDetailView = ProductResponse

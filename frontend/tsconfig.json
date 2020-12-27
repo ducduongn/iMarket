@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "module": "esnext",
+    "jsx": "react",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    
+    // Ensure that Babel can safely transpile files in the TypeScript project
+    "isolatedModules": true,
+
+    // "noEmit": true
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -21,6 +21,10 @@ import MartService.serializers as MartSerializer
 from knox.auth import TokenAuthentication
 
 from MartService.filters import ProductFilter
+from rest_framework.pagination import LimitOffsetPagination
+from MartService.filter.custom_ordering import MyCustomOrdering
+from django.db.models import Min
+from rest_framework_filters.backends import RestFrameworkFilterBackend
 
 SUCCESS = 'success'
 ERROR = 'error'
@@ -30,19 +34,19 @@ CREATE_SUCCESS = 'created'
 
 class ProductList(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
-
     queryset = Product.objects.all()
     # permission_classes = [IsOwnerOrReadOnly]
-
+    # pagination_class = LimitOffsetPagination
     serializer_class = ProductSerializer
     
-    filter_backends = [SearchFilter, OrderingFilter, ProductFilter]
-    search_fields = ['id', 'name', 'brand', 'shop__name']
-    ordering_fields = ['name', 'brand', "ctime"]
+    filter_backends = [SearchFilter, RestFrameworkFilterBackend, OrderingFilter]
+    filterset_class = ProductFilter
+    search_fields = ['name', 'brand', 'shop__name']
+    ordering_fields = ['name', 'brand', "ctime", "rating__rating_star", "shop__rating_star", "min_price"]
 
     
-    # def get_queryset(self, request):
-    #     return self.queryset
+    def get_queryset(self):
+        return self.queryset.annotate(min_price=Min('models__price'))
 
     # def get_object(self, request):
     #     product_id = self.kwargs['pk']
@@ -56,10 +60,10 @@ class ProductList(generics.ListCreateAPIView):
     #     serializer = self.get_serializer(instance)
     #     return Response(serializer.data)
 
-    def list(self, request, *args, **kwargs):
-        queryset    = self.get_queryset()
-        serializer  = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     queryset    = self.get_queryset()
+    #     serializer  = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
     
 
 # class ProductDetail(generics.RetrieveAPIView):
@@ -77,6 +81,7 @@ class ProductList(generics.ListCreateAPIView):
 class ProductDetail(generics.RetrieveUpdateAPIView):
     # permission_classes = [IsStaffOrTargetUser]
     # authentication_classes = [TokenAuthentication, ]
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 

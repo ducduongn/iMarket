@@ -10,11 +10,11 @@ export default function ActiveLastBreadcrumb(props: ActiveLastBreadcrumbProps & 
         <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} {...others}>
             {path.map((p, i) =>
                 i == path.length - 1 ? (
-                    <Link color="inherit" href={href[i]}>
+                    <Link key={p} color="inherit" href={href[i]}>
                         {p}
                     </Link>
                 ) : (
-                    <Link color="textPrimary" href={href[i]} aria-current="page">
+                    <Link key={p} color="textPrimary" href={href[i]} aria-current="page">
                         {p}
                     </Link>
                 ),

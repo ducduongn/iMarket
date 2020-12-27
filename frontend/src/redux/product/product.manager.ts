@@ -1,74 +1,69 @@
 import axios from 'axios';
+import { number } from 'yargs';
 import { PRODUCT_DETAIL, PDType } from '../../objects/ProductDetail';
-import { ProductOverviewType } from '../../Pages/Shopping/components/home/ProductListSection';
-import { ProductCardView, ProductListApiResponse, ProductResponse } from './product.d';
+import { ProductCardView, ProductListApiResponse, ProductModelResponse, ProductResponse } from './product.d';
+
+function arrayEquals(a: Array<unknown>, b: Array<unknown>) {
+    return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((val, index) => val === b[index]);
+}
+
+// ---------------------- Selections --------------------------------------
+export function res2plist(res: { results: ProductResponse[] }): ProductResponse[] {
+    return res.results;
+}
+
+export function tierInd2model(inds: number[], models: ProductModelResponse[]): ProductModelResponse | undefined {
+    if (inds.length == 0) return undefined;
+    const ret = models.find((m) => arrayEquals(m.tier_index, inds));
+    console.log('tierInd2model');
+    console.log(inds, ret);
+    return ret;
+}
+
 
 // ---------------------- Transform Functions ----------------------------
-export function prod2prodCardView(prod: ProductResponse): ProductCardView {
-    const { name, image, rating, oldprice, models } = prod;
-    const res = { name, image, price: Math.min(...models.map((m) => m.price)), rating_star: rating.rating_star };
+
+export function res2cards(res: ProductListApiResponse): ProductCardView[] {
+    return pds2cards(res2plist(res))
+}
+
+export function pd2card(prod: ProductResponse): ProductCardView {
+    const { itemid, name, image, rating, oldprice, models } = prod;
+    const res: ProductCardView = {
+        itemid,
+        name,
+        image,
+        price: Math.min(...models.map((m) => m.price)),
+        rating_star: rating.rating_star,
+        oldprice: undefined,
+    };
     if (oldprice > 0) res['oldprice'] = oldprice;
     return res;
 }
 
-export function api_get_productList(onSuccess: (data: ProductCardView[]) => unknown): void {
-    axios.get('/api/vi/martService/products/').then((res) => {
+export function pds2cards(prods: ProductResponse[]): ProductCardView[]{
+    return prods.map((pRes) => pd2card(pRes));
+}
+
+export type ApiGetProductList = {
+    onSuccess: (data: ProductListApiResponse) => unknown;
+    limit?: number;
+    offset?: number;
+    query?: string;
+    ordering?: string;
+};
+
+export function api_get_productList(params: ApiGetProductList): void {
+    const {onSuccess, limit = 0, offset = 0, query = "", ordering = ""} = params;
+    axios.get(`/api/v1/martService/products/?search=${query}&ordering=${ordering}&limit=${limit}&offset=${offset}`).then((res) => {
         const data: ProductListApiResponse = res.data;
-        const plist = data.results.map((pRes) => prod2prodCardView(pRes));
-        onSuccess(plist);
+        onSuccess(data);
     });
 }
 
-export function getProductDetail(onSuccess: (data: PDType) => unknown): void {
-    axios.get('/api/vi/martService/products/').then((res) => {
-        const data = res.data.results[0];
-        const tier_variations = data.tiervariation_set.map((t) => ({
-            name: t.name,
-            values: t.options.split(',').map((opt) => ({ value: opt, text: opt })),
-            id: t.id,
-        }));
-        const options = {
-            default: {
-                text: 'default',
-                price: -1,
-                maxPrice: -1,
-                availableQuantity: -1,
-                shop: 'shop01',
-            },
-        };
-        data.productmodel_set.forEach((element) => {
-            let k = '';
-            if (tier_variations[0].options != '') {
-                console.log(element);
-                k = element.tier_indexs.split(',').reduce((a: string, b: string, i: number): string => {
-                    return (a == '' ? a : a + ',') + tier_variations[i].values[parseInt(b)].value;
-                }, '');
-            } else {
-                k = 'only';
-            }
-            options[k] = {
-                text: k,
-                price: element.price,
-                availableQuantity: element.stock,
-                shop: 'shop01',
-            };
-        });
-        tier_variations.map((v) => v.values.push({ value: 'default', text: 'default' }));
-        console.log(tier_variations);
-        const plist = {
-            name: data.name,
-            rating: data.rating.rating,
-            brand: data.brand,
-            numRating: data.rating.count5,
-            unit: '₫',
-            gift: '$60 Apple Music gift card with purchase of select Beats products.',
-            description: data.description,
-            optionAvailables: tier_variations,
-            defaultOption: 'black',
-            comparePrice: data.oldprice,
-            options: options,
-        };
-        console.log(plist);
-        onSuccess(plist);
+export function api_get_productDetail(itemid: number, onSuccess: (data: ProductResponse) => unknown): void {
+    axios.get(`/api/v1/martService/products/${itemid}`).then((res) => {
+        const pd = res.data;
+        onSuccess(pd);
     });
 }

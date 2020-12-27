@@ -29,7 +29,7 @@ function Routing(props) {
             <PropsRoute path="/checkout" component={Checkout} />
             <PropsRoute path="/cart" component={Cart} />
             <PropsRoute path="/browse" component={Browse} />
-            <PropsRoute path="/detail" component={ProductDetail} />
+            <PropsRoute exact path="/detail/:id(\d+)/" component={ProductDetail} />
             <PropsRoute path="/" component={Home} selectHome={selectHome} />
         </Switch>
     );

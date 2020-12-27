@@ -1,6 +1,8 @@
+import { Skeleton } from '@material-ui/lab';
 import React, { useEffect, useState } from 'react';
 import { OptionsType, PDType, PRODUCT_DETAIL } from '../../../../objects/ProductDetail';
-import { getProductDetail } from '../../../../redux/product/product.manager';
+import { ProductDetailView, ProductModelResponse } from '../../../../redux/product/product.d';
+import { api_get_productDetail } from '../../../../redux/product/product.manager';
 import ActiveLastBreadcrumb from '../../../shared/components/ActiveLastBreadcrumb';
 import ProductMainFeature from './ProductMainFeature';
 // import PricingSection from "./PricingSection";
@@ -35,64 +37,29 @@ function getListPrice(options: OptionsType): number[] {
         .filter((x) => x > 0);
 }
 
-function ProductDetail(): JSX.Element {
+function ProductDetail(props: {match: {params:{id: number}}}): JSX.Element {
     const [buyQuantity, setBuyQuantity] = useState<number>(1);
-    const [pd, setPd] = useState<PDType>(PRODUCT_DETAIL);
+    const [product, setPd] = useState<ProductDetailView | undefined>();
+    const [model, selectModel] = useState<ProductModelResponse | undefined>();
     React.useEffect(() => {
-        getProductDetail(setPd);
+        api_get_productDetail(props.match.params.id, setPd);
     }, []);
     React.useEffect(() => {
-        console.log('-==-------------');
-        console.log(pd);
-    }, [pd]);
-    const prices = getListPrice(pd.options);
-    console.log('prices', prices);
-    const maxPrice = Math.max(...prices);
-    const minPrice = Math.min(...prices);
-    console.log('prices__', minPrice, maxPrice);
-
-    pd.options.default.price = minPrice;
-    pd.options.default.maxPrice = maxPrice;
-
-    const optionAvailables = pd.optionAvailables;
-    const optionProps = optionAvailables.map((v) => {
-        console.log(v);
-        const optionName = v.name;
-        const values = v.values;
-        const [option, setOption] = useState<string>('default');
-        return { optionName, values, option, setOption };
-    });
-    console.log(optionProps);
-
-    let selectedOption = optionProps.map((v) => v.option).join(',');
-
-    console.log(selectedOption);
-    if (!(selectedOption in pd.options)) {
-        selectedOption = 'default';
-    }
-    console.log(selectedOption);
-
-    const currentOptionProps = pd.options[selectedOption as keyof OptionsType];
-    const currentShop =
-        SHOPs_SUMMARY[pd.options[selectedOption as keyof OptionsType].shop as keyof typeof SHOPs_SUMMARY];
-    console.log(currentShop);
-
+        if (product !== undefined && product?.variations.length == 0) {
+            selectModel(product.models[0]);
+        }
+    }, [product]);
     return (
         <main>
             <section>
                 <ActiveLastBreadcrumb path={path} href={href} />
             </section>
-            <ProductMainFeature<string>
-                {...pd}
-                {...currentOptionProps}
-                optionProps={optionProps}
-                shopProps={{
-                    name: currentShop.name,
-                    slogan: currentShop.slogan,
-                    link: '#',
-                }}
-                quantityProps={{ buyQuantity, availableQuantity: currentOptionProps.availableQuantity, setBuyQuantity }}
-            />
+            <ProductMainFeature product={product} buyQuantity={buyQuantity} setBuyQuantity={setBuyQuantity} selectedModel={model} selectModel={selectModel} />
+            {/* <div>
+                <Skeleton variant="text" />
+                <Skeleton variant="circle" width={40} height={40} />
+                <Skeleton variant="rect" width={210} height={118} />
+            </div> */}
         </main>
     );
 }

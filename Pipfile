@@ -11,15 +11,14 @@ djangorestframework = "*"
 django-rest-knox = "*"
 pylint-django = "*"
 mysqlclient = "*"
-django = "==3.1.4"
+Django = "==3.1.4"
 django-filter = "*"
 django-credit-cards = "*"
 djangorestframework-jwt = "*"
 django-extensions = "*"
-django-phonenumber-field = {extras = ["phonenumberslite"],version = "*"}
 djangorestframework-simplejwt = "*"
 requests = "*"
-pillow = "*"
+Pillow = "*"
 django-unixdatetimefield = "*"
 django-cloudinary-storage = "*"
 six = "*"
@@ -27,3 +26,7 @@ djangorestframework-filters = "==1.0.0.dev0"
 
 [requires]
 python_version = "3.8"
+
+[packages.django-phonenumber-field]
+extras = [ "phonenumberslite",]
+version = "*"

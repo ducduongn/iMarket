@@ -25,7 +25,7 @@ urlpatterns = [
     # url(r'^', include(router.urls)),
     path('products/', ProductList.as_view(), name="products"),
     path('products/<int:pk>/', ProductDetail.as_view()),
-    path('category/', CategoryList.as_view(), name="products"),
+    path('category/', CategoryList.as_view(), name="category"),
     path('category/<int:pk>/', CategoryList.as_view()),
     # url(r'^products/$', ProductList.as_view()),
     # url(r'^products/(?P&lt;pk&gt;[0-9]+)/$', ProductList.as_view()),

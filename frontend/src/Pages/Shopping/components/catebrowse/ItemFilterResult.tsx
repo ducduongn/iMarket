@@ -1,9 +1,11 @@
 import { Box, Button, Grid, makeStyles, Menu, MenuItem, Theme, Typography } from '@material-ui/core';
 import { ArrowDropDown, ViewList, ViewModule } from '@material-ui/icons';
-import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { Pagination, Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { PRODUCT_LIST } from '../../../../objects/ProductDetail';
-import { ProductCard } from '../home/ProductListSection';
+import { ProductCardView } from '../../../../redux/product/product.d';
+import { ProductCard, ProductCartSkeleton } from '../home/ProductListSection';
+import { OrderField } from './Browse.page';
 
 const headerStyles = makeStyles(() => ({
     header: {
@@ -34,23 +36,27 @@ const headerStyles = makeStyles(() => ({
         letterSpacing: 0,
     },
 }));
-const SORT = ['Most recent', 'Popular', 'Price high', 'Price Low'];
-function Header(props: { view: string; setView: Dispatch<SetStateAction<string>> }): JSX.Element {
+type HeaderProps = {
+    view: string;
+    setView: Dispatch<SetStateAction<string>>;
+    SORT: string[];
+    ordering: number;
+    setOrdering: Dispatch<SetStateAction<number>>;
+};
+function Header(props: HeaderProps): JSX.Element {
     const classes = headerStyles();
-    const { view, setView } = props;
+    const { view, setView, SORT, ordering, setOrdering } = props;
     const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
         setView(nextView);
     };
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-
-    const [sort, setSort] = useState<number>(0);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = (i: number) => () => {
         if (i >= 0) {
-            setSort(i);
+            setOrdering(i);
         }
         setAnchorEl(null);
     };
@@ -63,7 +69,7 @@ function Header(props: { view: string; setView: Dispatch<SetStateAction<string>>
             </Typography>
             <Box className={classes.headerRight}>
                 <Button className={classes.sortButton} onClick={handleClick} size="small">
-                    {SORT[sort]}
+                    {SORT[ordering]}
                     <ArrowDropDown fontSize="small" />
                 </Button>
                 <Menu
@@ -106,29 +112,45 @@ const useStyles = makeStyles({
         justifyContent: 'center',
     },
 });
-function ItemFilterResult(): JSX.Element {
+function ItemFilterResult(
+    props: {
+        loading: boolean;
+        count?: number;
+        productList?: ProductCardView[];
+        fetchNewPage: (limit: number, offset: number) => void;
+    } & Omit<HeaderProps, 'view' | 'setView'>,
+): JSX.Element {
+    const { loading, productList, count = 0, fetchNewPage, SORT, ordering, setOrdering } = props;
+    // const loading = productList == undefined;
     const classes = useStyles();
-    const [view, setView] = React.useState('list');
-    const md = view == 'list' ? 6 : 4;
-    const lg = view == 'list' ? 6 : 3;
+    const [view, setView] = React.useState('module');
+    const md = view == 'list' ? 4 : 3;
+    const lg = view == 'list' ? 4 : 3;
     const [page, setPage] = React.useState(1);
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
+        fetchNewPage(8, (value - 1) * 8);
     };
 
     return (
         <Box>
             <div>
-                <Header {...{ view, setView }} />
+                <Header {...{ view, setView, SORT, ordering, setOrdering }} />
                 <Grid container spacing={3}>
-                    {PRODUCT_LIST.map((v) => (
-                        <Grid key={v.name} item xs={12} md={md} lg={lg}>
-                            <ProductCard {...v} />;
-                        </Grid>
-                    ))}
+                    {loading
+                        ? new Array(8).fill(1).map((v, i) => (
+                              <Grid key={i} item xs={12} md={md} lg={lg}>
+                                  <ProductCartSkeleton />
+                              </Grid>
+                          ))
+                        : (productList as ProductCardView[]).map((v) => (
+                              <Grid key={v.name} item xs={12} md={md} lg={lg}>
+                                  <ProductCard {...v} />;
+                              </Grid>
+                          ))}
                 </Grid>
                 <Box className={classes.pagination}>
-                    <Pagination count={10} page={page} onChange={handlePageChange} />
+                    <Pagination count={Math.round(count / 8)} page={page} onChange={handlePageChange} />
                 </Box>
             </div>
         </Box>

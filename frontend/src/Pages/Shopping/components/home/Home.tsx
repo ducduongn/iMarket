@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import MainFeaturePost from './MainFeaturePost';
 import CategorySection from './CategorySection';
-import ProductListSection, { ProductOverviewType } from './ProductListSection';
+import ProductListSection from './ProductListSection';
 import { PRODUCT_LIST } from '../../../../objects/ProductDetail';
-import { get_products } from '../../../../redux/product/product.manager';
+import { api_get_productList } from '../../../../redux/product/product.manager';
+import { ProductCardView } from '../../../../redux/product/product.d';
 // import PricingSection from "./PricingSection";
 
 function Home(props: { selectHome: () => unknown }): JSX.Element {
-    const [productList, setProductList] = useState<ProductOverviewType[]>(PRODUCT_LIST);
+    const [productList, setProductList] = useState<ProductCardView[]>(PRODUCT_LIST);
     const { selectHome } = props;
     useEffect(() => {
         selectHome();
-        get_products(setProductList);
+        api_get_productList(setProductList);
     }, [selectHome]);
     return (
         <main>

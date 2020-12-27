@@ -4,14 +4,14 @@ import ButtonGroup, { ButtonGroupProps } from '@material-ui/core/ButtonGroup';
 
 type GroupedButtonsProps = {
     value: number;
-    setValue: Dispatch<SetStateAction<number>>;
+    setValue?: Dispatch<SetStateAction<number>>;
     min: number;
     max: number;
 } & ButtonGroupProps;
 function GroupedButtons(props: GroupedButtonsProps): JSX.Element {
     const { value, setValue, min, max, ...others } = props;
     const handleChangeValue = (step: number) => () => {
-        setValue(value + step);
+        setValue && setValue(value + step);
     };
     return (
         <ButtonGroup {...others} aria-label="small outlined button group">

@@ -3,6 +3,7 @@ import ProcessorIcon from '../Pages/Shopping/components/catebrowse/icons/Process
 import RamIcon from '../Pages/Shopping/components/catebrowse/icons/RamIcon';
 import { ProductOverviewType } from '../Pages/Shopping/components/home/ProductListSection';
 import Axios from 'axios';
+import { ProductCardView } from '../redux/product/product.d';
 
 export default class ProductDetail {}
 
@@ -86,38 +87,14 @@ export type OptionsType = Record<
 >;
 export type PDType = Omit<typeof PRODUCT_DETAIL, 'options'> & { options: OptionsType };
 
-export const PRODUCT_LIST: Array<ProductOverviewType> = [
+export const PRODUCT_LIST: Array<ProductCardView> = [
     {
+        itemid: 1,
         name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
+        rating_star: 4,
         image: `${process.env.PUBLIC_URL}/assets/images/products/sp1.png`,
         price: 1200000,
-        compare: 1500000,
-    },
-    {
-        name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
-        image: `${process.env.PUBLIC_URL}/assets/images/products/sp2.png`,
-        price: 1200000,
-    },
-    {
-        name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
-        image: `${process.env.PUBLIC_URL}/assets/images/products/sp1.png`,
-        price: 1200000,
-    },
-    {
-        name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
-        image: `${process.env.PUBLIC_URL}/assets/images/products/sp1.png`,
-        price: 1200000,
-        compare: 1500000,
-    },
-    {
-        name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
-        image: `${process.env.PUBLIC_URL}/assets/images/products/sp2.png`,
-        price: 1200000,
-    },
-    {
-        name: 'Tai Nghe Bluetooth Chụp Tai Sony WH-1000XM4 Hi-Res Noise Canceling - Hàng Chính Hãng',
-        image: `${process.env.PUBLIC_URL}/assets/images/products/sp1.png`,
-        price: 1200000,
+        oldprice: 1500000,
     },
 ];
 
