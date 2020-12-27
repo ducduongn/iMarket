@@ -17,10 +17,9 @@ import ConfirmationDialog from '../../../shared/components/ConfirmationDialog';
 
 import { RowItemType, CartTypes } from './Cart.d';
 
-import { createTableData, deleteTableDataByRow, deleteTableDataByModelIds } from './utils';
+import { deleteTableDataByRow, deleteTableDataByModelIds } from './utils';
 import { Grid } from '@material-ui/core';
 import ShopSectionTable from './CartTable/ShopSectionTable';
-import { getShopOrder } from '../../../../api/order';
 import { useSnackbar } from '../../../shared/components/SnackbarProvider';
 
 interface HeadCell {
@@ -294,14 +293,14 @@ export default function CartTable(props: {
                                 </Paper>
                             </Grid>
                             {data.map((shop) => (
-                                <Grid item xs={12} key={shop.shop.shopName}>
+                                <Grid item xs={12} key={shop.shop.shopname}>
                                     <Paper>
                                         <ShopSectionTable
                                             selected={selected}
                                             setSelected={setSelected}
                                             classes={classes}
                                             rows={shop.items}
-                                            shopName={shop.shop.shopName}
+                                            shopName={shop.shop.shopname}
                                             handleDeleteTargetDialogOpen={handleDeleteTargetDialogOpen}
                                         />
                                     </Paper>

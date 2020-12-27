@@ -30,9 +30,7 @@ export default function BadgeOverlap() {
     return (
         <div>
             <NarBar />
-            <SnackbarProvider>
                 <Routing selectHome={selectHome} />
-            </SnackbarProvider>
         </div>
     );
 }

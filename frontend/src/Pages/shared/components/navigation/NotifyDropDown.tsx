@@ -56,14 +56,12 @@ const StyledAvatar = withStyles(() => ({
         backgroundColor: '#5850EC',
     },
 }))(Avatar);
-type ProductCartReview = { itemid: number; name: string; desc: string; price: number };
+type ProductCartReview = { name: string; desc: string; price: number };
 const connector = connect((state: RootState) => {
     const ret: ProductCartReview[] = [];
     const cart = state.cart;
     cart.data.map((s) =>
-        s.items.map((i) =>
-            ret.push({ itemid: i.itemid, name: i.name, desc: s.shop.shopname, price: i.price / 1000000 }),
-        ),
+        s.items.map((i) => ret.push({ name: i.name, desc: s.shop.shopname, price: i.price / 1000000 })),
     );
     return { cart: ret };
 });
@@ -74,7 +72,7 @@ type CartDropDownProps = PropsFromRedux & {
     anchorEl: null | Element | ((element: Element) => Element);
     setAnchorEl: React.Dispatch<React.SetStateAction<null | Element | ((element: Element) => Element)>>;
 };
-const CartDropDown = (props: CartDropDownProps) => {
+const NotifyDropDown = (props: CartDropDownProps) => {
     const { anchorEl, setAnchorEl, cart } = props;
     const handleClose = () => {
         setAnchorEl(null);
@@ -94,7 +92,7 @@ const CartDropDown = (props: CartDropDownProps) => {
             </Box>
             <List disablePadding={true}>
                 {cart.map((p: ProductCartReview, i: number) => (
-                    <CartItem key={i} divider href={`/detail/${p.itemid}`}>
+                    <CartItem key={i} divider>
                         <ListItemAvatar>
                             <StyledAvatar>
                                 {/* <LocalShippingOutlined /> */}
@@ -111,6 +109,18 @@ const CartDropDown = (props: CartDropDownProps) => {
                         />
                     </CartItem>
                 ))}
+
+                <CartItem divider>
+                    <ListItemAvatar>
+                        <StyledAvatar>
+                            <LocalShippingOutlined />
+                        </StyledAvatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={<Typography variant="subtitle2">Your order is shipping</Typography>}
+                        secondary="Jan 9, 2020"
+                    />
+                </CartItem>
             </List>
 
             <Box style={{ padding: '8px', justifyContent: 'center', display: 'flex' }}>
@@ -121,4 +131,4 @@ const CartDropDown = (props: CartDropDownProps) => {
         </StyledPopover>
     );
 };
-export default connector(CartDropDown);
+export default connector(NotifyDropDown);

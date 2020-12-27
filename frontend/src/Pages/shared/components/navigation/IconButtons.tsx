@@ -10,9 +10,11 @@ import {
 } from '@material-ui/core';
 import { MoreVert, Menu, ShoppingCartOutlined } from '@material-ui/icons';
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/root-reducer';
 import { CustomNotificationIcon, CustomSearchIcon } from '../CustomIcons';
 import CartDropDown from './CartDropDown';
+import NotifyDropDown from './NotifyDropDown';
 
 const StyledBadge = withStyles(() => ({
     badge: {
@@ -53,10 +55,13 @@ const CartIcon = () => {
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+    const numInCart = useSelector((state: RootState) =>
+        state.cart.data.map((s) => s.items.length).reduce((a, c) => a + c, 0),
+    );
     return (
         <Fragment>
             <PrimaryHeadBarIcon tooltip="Cart" onClick={handleClick}>
-                <StyledBadge badgeContent="2" overlap="circle" color="secondary" invisible={false}>
+                <StyledBadge badgeContent={numInCart} overlap="circle" color="secondary" invisible={false}>
                     <ShoppingCartOutlined />
                 </StyledBadge>
             </PrimaryHeadBarIcon>
@@ -88,20 +93,29 @@ const AccountIcon = ({ menuId, ...others }: AccountIconType): JSX.Element => {
             {...others}
             // containerElement={<Link to="/listings" />}
         >
-            <Avatar src="/static/images/avatar/1.jpg" style={{ width: theme.spacing(4), height: theme.spacing(4) }} />
+            <Avatar style={{ width: theme.spacing(4), height: theme.spacing(4) }} />
         </PrimaryHeadBarIcon>
     );
 };
 export const AccountIconButton = AccountIcon;
 
-export const NotiIconButton = (): JSX.Element => (
-    <PrimaryHeadBarIcon tooltip="Notification">
-        <Badge badgeContent={0} color="secondary">
-            {/* <NotificationsOutlined className={className}/> */}
-            {CustomNotificationIcon}
-        </Badge>
-    </PrimaryHeadBarIcon>
-);
+export const NotiIconButton = (): JSX.Element => {
+    const [anchorEl, setAnchorEl] = React.useState<null | Element | ((element: Element) => Element)>(null);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    return (
+        <Fragment>
+            <PrimaryHeadBarIcon tooltip="Notification" onClick={handleClick}>
+                <Badge badgeContent={0} color="secondary">
+                    {/* <NotificationsOutlined className={className}/> */}
+                    {CustomNotificationIcon}
+                </Badge>
+            </PrimaryHeadBarIcon>
+            <NotifyDropDown anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+        </Fragment>
+    );
+};
 
 export const SearchIconButton = () => {
     return (

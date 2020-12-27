@@ -53,13 +53,14 @@ export type RowItemType = {
     price: number;
     quantity: number;
 };
-export type CartTypes = Array<{
+export type CartItem = {
     shop: {
         shopid: number;
         shopname: string;
     };
     items: Array<RowItemType>;
-}>;
+};
+export type CartTypes = Array<CartItem>;
 
 export type ShopOrderIdsType = Array<{
     shopid: number;

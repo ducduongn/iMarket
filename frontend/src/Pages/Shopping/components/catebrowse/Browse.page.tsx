@@ -19,14 +19,15 @@ function Browse(): JSX.Element {
     React.useEffect(() => smoothScrollTop(), []);
     const [resonse, setResponse] = useState<ProductListApiResponse | undefined>();
     const [chipData, setChipData] = React.useState<ChipData[]>([]);
+    const [asc, setAsc] = React.useState<boolean>(true);
     const [ordering, setOrdering] = React.useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
         setLoading(true);
         const query = chipData.map((o) => o.label).join(' ');
-        api_get_productList({ onSuccess: setResponse, limit: 8, query: query, ordering: avaiOrderField[ordering] });
-    }, [chipData, ordering]);
-    const fetchNewPage = (limit, offset) => {
+        api_get_productList({ onSuccess: setResponse, limit: 8, query: query, ordering: (asc ? "" : "-") + avaiOrderField[ordering] });
+    }, [chipData, ordering, asc]);
+    const fetchNewPage = (limit: number, offset: number) => {
         setLoading(true);
         api_get_productList({ onSuccess: setResponse, limit, offset });
     };
@@ -49,7 +50,7 @@ function Browse(): JSX.Element {
                     count={resonse && resonse.count}
                     productList={resonse && res2cards(resonse)}
                     fetchNewPage={fetchNewPage}
-                    {...{ ordering, setOrdering, SORT }}
+                    {...{ ordering, setOrdering, SORT, asc, setAsc }}
                 />
             </section>
         </main>

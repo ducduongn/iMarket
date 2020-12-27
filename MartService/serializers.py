@@ -60,13 +60,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
-        # fields = '__all__'
+        fields = [field.name for field in model._meta.fields]
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
     class Meta:
         model = Cart
-        fields = ['create_at']
+        fields = [field.name for field in model._meta.fields] + ['items']
 
 class ShipProfileSerializer(serializers.ModelSerializer):
     class Meta:

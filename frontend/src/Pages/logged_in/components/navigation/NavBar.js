@@ -30,6 +30,9 @@ import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
 import Balance from "./Balance";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import { action } from "../../../../redux/store";
+import { LOGOUT } from "../../../../redux/auth/auth.types";
+import { useSelector } from "react-redux";
 
 const styles = (theme) => ({
   appBar: {
@@ -128,6 +131,7 @@ const styles = (theme) => ({
 
 function NavBar(props) {
   const { selectedTab, messages, classes, width, openAddBalanceDialog } = props;
+  const token = useSelector(state => state.auth.token);
   // Will be use to make website more accessible by screen readers
   const links = useRef([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -320,7 +324,9 @@ function NavBar(props) {
                     divider={index !== menuItems.length - 1}
                     className={classes.permanentDrawerListItem}
                     onClick={() => {
+                      element.name === "Logout" && action(LOGOUT, token)
                       links.current[index].click();
+                      
                     }}
                     aria-label={
                       element.name === "Logout"

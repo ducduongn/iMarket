@@ -1,5 +1,23 @@
 import { makeStyles } from '@material-ui/core';
-
+export const ProductMainStyles = makeStyles(() => ({
+    sectionRoot: {
+        background: '#ffffff',
+        padding: '0px 16px',
+        borderRadius: '8px',
+    },
+    subtitleRating_wrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: '4px',
+    },
+    subtitleRating_link: {
+        textDecoration: 'none',
+        marginLeft: '5px',
+    },
+    image: {
+        objectFit: 'contain',
+    },
+}));
 export const HeaderFeatureStyles = makeStyles(() => ({
     brand: {
         display: 'flex',

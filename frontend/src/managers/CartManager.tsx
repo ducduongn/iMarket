@@ -1,4 +1,4 @@
-import { CartTypes, ModelOrderType, RowItemType } from './Cart.d';
+import { CartTypes, ModelOrderType, RowItemType } from './Cart.types';
 
 type UpdateCart = {
     success: boolean;
@@ -54,7 +54,7 @@ export function deleteTableDataByModelIds(tableData: CartTypes, modelids: Set<nu
 }
 import axios from 'axios';
 
-export function fetchCartData(onSuccess: (d: unknown) => void): void {
+export function fetchCartData(onSuccess: (d: unknown) => void): Promise<void> {
     return axios
         .get('/data/shop_order.json')
         .then((res) => onSuccess(res.data))

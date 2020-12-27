@@ -10,7 +10,7 @@ import ShopSummary, { ShopSummaryProps } from './ShopSummary';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import PriceFeature, { PriceProps } from '../shared/PriceFeature';
-import { useSnackbar, withSnackbar, WithSnackbar } from '../../../shared/components/SnackbarProvider';
+import { useSnackbar } from '../../../shared/components/SnackbarProvider';
 import { Skeleton } from '@material-ui/lab';
 import {
     ProductDetailView,
@@ -19,6 +19,9 @@ import {
     TierVariation,
 } from '../../../../redux/product/product.d';
 import { tierInd2model } from '../../../../redux/product/product.manager';
+import { action } from '../../../../redux/store';
+import { ADD_TO_CART } from '../../../../redux/cart/cart.types';
+import { p2cartItem } from '../../../../redux/cart/cart.manager';
 
 interface HeaderProps {
     name: string;
@@ -147,7 +150,7 @@ const BuyButton = (props: { availableQuantity?: number } & ButtonProps) => {
                 size="large"
                 fullWidth
                 color="primary"
-                disabled={availableQuantity != undefined && availableQuantity <= 0}
+                disabled={availableQuantity == undefined || availableQuantity <= 0}
                 {...buttonProps}
             >
                 Chọn mua ngay
@@ -158,6 +161,7 @@ const BuyButton = (props: { availableQuantity?: number } & ButtonProps) => {
 export type ProductSummaryProps = ProductDetailView & {
     selectedModel: ProductModelResponse | undefined;
     selectModel: Dispatch<SetStateAction<ProductModelResponse | undefined>>;
+    onBuyClick: () => unknown;
 } & Omit<QuantitySelectionFeatureProps, 'availableQuantity'>;
 export default function ProductSummary(props: ProductSummaryProps): JSX.Element {
     const {
@@ -171,6 +175,7 @@ export default function ProductSummary(props: ProductSummaryProps): JSX.Element 
         selectModel,
         buyQuantity,
         setBuyQuantity,
+        onBuyClick,
     } = props;
     const [options, setOptions] = useState<number[]>([]);
     const prices = models.map((m) => m.price);
@@ -216,7 +221,7 @@ export default function ProductSummary(props: ProductSummaryProps): JSX.Element 
                         availableQuantity={selectedModel ? selectedModel.stock : -1}
                     />
                     <BuyButton
-                        onClick={() => snackbar.info({ text: 'Added item to cart' })}
+                        onClick={onBuyClick}
                         availableQuantity={selectedModel ? selectedModel.stock : undefined}
                     />
                 </Grid>

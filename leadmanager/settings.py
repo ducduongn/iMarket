@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # Auth
     'knox',
-    'rest_framework_jwt',
+    # 'rest_framework_jwt',
     
     # My apps
     'leads',
@@ -144,17 +144,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+     'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
     ),
-    'DEFAULT_FILTER_BACKENDS': [
-         'django_filters.rest_framework.DjangoFilterBackend',
-         'rest_framework_filters.backends.RestFrameworkFilterBackend'
-    ],
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     # 'rest_framework.permissions.IsAuthenticated',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'knox.auth.TokenAuthentication',
+
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+    ),
+    # 'DEFAULT_FILTER_BACKENDS': [
+    #      'django_filters.rest_framework.DjangoFilterBackend',
+    #      'rest_framework_filters.backends.RestFrameworkFilterBackend'
     # ],
+    # # 'DEFAULT_PERMISSION_CLASSES': [
+    # #     # 'rest_framework.permissions.IsAuthenticated',
+    # #     'knox.auth.TokenAuthentication',
+    # # ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10
 }

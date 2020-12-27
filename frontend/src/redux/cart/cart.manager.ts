@@ -1,5 +1,26 @@
-import { CartTypes, ModelOrderType, RowItemType } from './cart.d';
+import { CartItem, CartItemType, CartTypes, ModelOrderType, RowItemType } from './cart.d';
 import axios from 'axios';
+import { ProductModelResponse, ProductResponse } from '../product/product.d';
+
+export function p2cartItem(p: ProductResponse, m: ProductModelResponse, quantity: number): CartItem {
+    const shop = { shopid: p.shop.shopid, shopname: p.shop.name };
+    let model_name = '';
+    if (p.variations.length > 0) {
+        model_name = m.tier_index.map((v, i) => p.variations[i].options[v]).join(', ');
+    }
+
+    const row = {
+        shopid: p.shop.shopid,
+        itemid: p.itemid,
+        modelid: m.modelid,
+        name: p.name,
+        modelname: model_name,
+        oldprice: p.oldprice * 100000,
+        price: m.price * 100000,
+        quantity: quantity,
+    };
+    return { shop: shop, items: [row] };
+}
 
 type UpdateCart = {
     success: boolean;
@@ -52,6 +73,22 @@ export function deleteTableDataByModelIds(tableData: CartTypes, modelids: Set<nu
     });
     if (count > 0) return createUpdateCartResponse(true, [...tableData.filter((s) => s.items.length > 0)]);
     return createUpdateCartResponse(false, tableData);
+}
+
+export function addCartItem(cart: CartTypes, cartitem: CartItem): UpdateCart {
+    const newCart = [...cart];
+    const shop = newCart.find((ci) => ci.shop.shopid == cartitem.shop.shopid);
+    if (shop) {
+        console.log(shop);
+        console.log(cartitem);
+        if (shop.items.find((i) => i.modelid === cartitem.items[0].modelid) === undefined) {
+            console.log('added');
+            shop.items = [...shop.items, cartitem.items[0]];
+        }
+    } else {
+        newCart.push(cartitem);
+    }
+    return createUpdateCartResponse(true, newCart);
 }
 
 export function processFetchResponse(cartData: CartTypes): CartTypes {

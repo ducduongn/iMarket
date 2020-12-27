@@ -66,42 +66,25 @@ export interface ChipData {
  */
 export function ProductFilterSectionHeading(props: {
     options: string[];
+    baseInd: number;
     headingName: string;
     icon: React.ReactNode;
-    reset: number;
+    toggleFunc: (c: ChipData) => void;
+    chipData: ChipData[];
 }): JSX.Element {
-    const { options, reset } = props;
-
-    // State và function cho checkbox
-    const [checked, setChecked] = React.useState<number[]>([]);
-    const handleToggle = (value: number) => () => {
-        console.log('add ', value);
-        // Thêm index của value nếu không có trong checked, xóa nếu đã có.
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-        setChecked(newChecked);
-    };
-
-    //
-    const [trackReset, setTrackReset] = React.useState(reset);
-    if (trackReset !== reset) {
-        setTrackReset(reset);
-    }
-    React.useEffect(() => {
-        setChecked([]);
-    }, [trackReset]);
-
+    const { options, toggleFunc, chipData, baseInd } = props;
     return (
         <List component="div" disablePadding>
             {options.map((value, i) => {
                 const labelId = `ch eckbox-list-label-${i}`;
                 return (
-                    <ListItem key={i} role={undefined} dense button onClick={handleToggle(i)}>
+                    <ListItem
+                        key={i}
+                        role={undefined}
+                        dense
+                        button
+                        onClick={() => toggleFunc({ key: i + baseInd, label: value })}
+                    >
                         {/* Phần chứa text miêu tả option */}
                         <ListItemText id={labelId}>
                             <Typography variant="subtitle2">{value}</Typography>
@@ -109,9 +92,9 @@ export function ProductFilterSectionHeading(props: {
                         {/* Phần chứa checkbox */}
                         <ListItemSecondaryAction>
                             <Checkbox
-                                onClick={handleToggle(i)}
+                                onClick={() => toggleFunc({ key: i + baseInd, label: value })}
                                 edge="end"
-                                checked={checked.indexOf(i) !== -1}
+                                checked={chipData.find((o) => o.key == i + baseInd) !== undefined}
                                 tabIndex={-1}
                                 disableRipple
                                 inputProps={{ 'aria-labelledby': labelId }}
@@ -126,6 +109,14 @@ export function ProductFilterSectionHeading(props: {
 
 function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetStateAction<ChipData[]>> }): JSX.Element {
     const { chipData, setChipData } = props;
+    const filterSection = FILTER_SECTIONS;
+    const baseInd: number[] = [];
+    const baseKeywordInd = filterSection
+        .map((o) => o.options.length)
+        .reduce((a, c) => {
+            baseInd.push(a);
+            return a + c;
+        }, 0);
     const classes = useStyles();
     // const [chipData, setChipData] = React.useState<ChipData[]>([]);
     const handleDelete = (chipToDelete: ChipData) => () => {
@@ -133,7 +124,7 @@ function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetState
     };
     const handleEnterKeyword = (label: string) => {
         if (chipData.find((o) => o.label.toLowerCase() == label.toLowerCase())) return;
-        const key = Math.max(Math.max(...chipData.map((o) => o.key)) + 1, 0);
+        const key = Math.max(Math.max(...chipData.map((o) => o.key)) + 1, baseKeywordInd);
         console.log('key', key);
         setChipData([...chipData, { key, label }]);
     };
@@ -145,6 +136,20 @@ function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetState
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleToggle = (c: ChipData) => {
+        const ind = chipData.findIndex((o) => c.key == o.key);
+        console.log(chipData, ind);
+        if (ind >= 0) {
+            console.log(c)
+            chipData.splice(ind as number, 1)
+            console.log("Del", c)
+            setChipData([...chipData]);
+        } else {
+            console.log("Add", c)
+            setChipData([...chipData, c]);
+        }
     };
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -158,10 +163,10 @@ function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetState
                         className={classes.inputSearch}
                         onKeyDown={(e) => {
                             if (e.key == 'Enter') {
-                                handleEnterKeyword(e.target.value);
+                                handleEnterKeyword((e.target as HTMLTextAreaElement).value);
                                 // NOTE: Blur active element to trigger a blur on Enter key press
-                                if (document && document.activeElement) document.activeElement.blur();
-                                e.target.value = '';
+                                if (document && document.activeElement) (document.activeElement as HTMLElement).blur();
+                                (e.target as HTMLTextAreaElement).value = '';
                             }
                         }}
                         fullWidth
@@ -183,12 +188,11 @@ function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetState
                 </Box>
                 <Divider />
                 <Box className={classes.menus}>
-                    {Object.keys(FILTER_SECTIONS).map((v) => {
-                        const Icon = FILTER_SECTIONS[v as keyof typeof FILTER_SECTIONS].icon;
+                    {filterSection.map((v, i) => {
+                        const Icon = v.icon;
                         return (
-                            <Button key={v} onClick={handleClick} value={v}>
-                                <Icon className={classes.filterButtonIcon} />{' '}
-                                {FILTER_SECTIONS[v as keyof typeof FILTER_SECTIONS].headingName}{' '}
+                            <Button key={v.idFilterSection} onClick={handleClick} value={i}>
+                                <Icon className={classes.filterButtonIcon} /> {v.headingName}{' '}
                                 <ArrowDropDown fontSize="small" />
                             </Button>
                         );
@@ -210,8 +214,10 @@ function FilterBar(props: { chipData: ChipData[]; setChipData: Dispatch<SetState
                     >
                         {anchorEl && (
                             <ProductFilterSectionHeading
-                                reset={0}
-                                {...FILTER_SECTIONS[anchorEl.value as keyof typeof FILTER_SECTIONS]}
+                                baseInd={baseInd[parseInt(anchorEl.value)]}
+                                {...filterSection[parseInt(anchorEl.value)]}
+                                toggleFunc={handleToggle}
+                                chipData={chipData}
                             />
                         )}
                     </Popover>

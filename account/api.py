@@ -96,6 +96,20 @@ class UserList(generics.ListCreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserAPI(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = UserSerializer
+
+    # def get(self, request):
+    #     return Response({
+    #         "user": self.get_serializer(request.user).data
+    #     })
+
+    def get_object(self):
+        return self.request.user
+
 
 class SignUpAPI(generics.GenericAPIView):
     """
@@ -152,12 +166,13 @@ class LoginAPI(generics.GenericAPIView):
         #     raise AuthenticationFailed(
         #         detail='Account has been login in. Please logout')
         # login(request, user)
-        _, token = AuthToken.objects.create(user=request.user)
+        _, token = AuthToken.objects.create(user=user)
         login(request, user)
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": token
         })
+
 
 class ActivateAccountAPI(generics.GenericAPIView):
     """

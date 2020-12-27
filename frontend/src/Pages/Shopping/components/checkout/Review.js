@@ -5,18 +5,19 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
-
-const products = [
-    { name: 'Product 1', desc: 'A nice thing', price: '$9.99' },
-    { name: 'Product 2', desc: 'Another thing', price: '$3.45' },
-    { name: 'Product 3', desc: 'Something else', price: '$6.51' },
-    { name: 'Product 4', desc: 'Best thing of all', price: '$14.11' },
-    { name: 'Shipping', desc: '', price: 'Free' },
-];
-const addresses = ['1 Material-UI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
+import { useSelector } from 'react-redux';
+import { numberWithCommas } from '../../../../utils';
+// const products = [
+//     { name: 'Product 1', desc: 'A nice thing', price: '$9.99' },
+//     { name: 'Product 2', desc: 'Another thing', price: '$3.45' },
+//     { name: 'Product 3', desc: 'Something else', price: '$6.51' },
+//     { name: 'Product 4', desc: 'Best thing of all', price: '$14.11' },
+//     { name: 'Shipping', desc: '', price: 'Free' },
+// ];
+const addresses = ['144 Xuan Thuy', 'Cau Giay', 'Ha Noi', '99999', 'VN'];
 const payments = [
     { name: 'Card type', detail: 'Visa' },
-    { name: 'Card holder', detail: 'Mr John Smith' },
+    { name: 'Card holder', detail: 'Mr UET' },
     { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
     { name: 'Expiry date', detail: '04/2024' },
 ];
@@ -35,7 +36,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Review() {
     const classes = useStyles();
-
+    const products = useSelector((state) => {
+        const ret = [];
+        const cart = state.cart;
+        cart.data.map((s) =>
+            s.items.map((i) => ret.push({ name: i.name, desc: s.shop.shopname, price: i.price / 1000000 })),
+        );
+        return ret;
+    });
+    const shipName = 'UET';
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
@@ -44,8 +53,14 @@ export default function Review() {
             <List disablePadding>
                 {products.map((product) => (
                     <ListItem className={classes.listItem} key={product.name}>
-                        <ListItemText primary={product.name} secondary={product.desc} />
-                        <Typography variant="body2">{product.price}</Typography>
+                        <Grid container alignContent="space-between">
+                            <Grid item xs={8}>
+                                <ListItemText primary={product.name} secondary={product.desc} noWrap />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography align="right" variant="body2">{numberWithCommas(product.price)} VND</Typography>
+                            </Grid>
+                        </Grid>
                     </ListItem>
                 ))}
                 <ListItem className={classes.listItem}>
@@ -60,7 +75,7 @@ export default function Review() {
                     <Typography variant="h6" gutterBottom className={classes.title}>
                         Shipping
                     </Typography>
-                    <Typography gutterBottom>John Smith</Typography>
+                    <Typography gutterBottom>{shipName}</Typography>
                     <Typography gutterBottom>{addresses.join(', ')}</Typography>
                 </Grid>
                 <Grid item container direction="column" xs={12} sm={6}>

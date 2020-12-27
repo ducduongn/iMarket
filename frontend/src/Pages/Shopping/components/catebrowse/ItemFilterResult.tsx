@@ -1,11 +1,10 @@
 import { Box, Button, Grid, makeStyles, Menu, MenuItem, Theme, Typography } from '@material-ui/core';
-import { ArrowDropDown, ViewList, ViewModule } from '@material-ui/icons';
+import { ArrowDownward, ArrowDropDown, ArrowUpward, ViewList, ViewModule } from '@material-ui/icons';
 import { Pagination, Skeleton, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { PRODUCT_LIST } from '../../../../objects/ProductDetail';
 import { ProductCardView } from '../../../../redux/product/product.d';
 import { ProductCard, ProductCartSkeleton } from '../home/ProductListSection';
-import { OrderField } from './Browse.page';
 
 const headerStyles = makeStyles(() => ({
     header: {
@@ -37,15 +36,18 @@ const headerStyles = makeStyles(() => ({
     },
 }));
 type HeaderProps = {
+    count: number
     view: string;
     setView: Dispatch<SetStateAction<string>>;
     SORT: string[];
     ordering: number;
     setOrdering: Dispatch<SetStateAction<number>>;
+    asc: boolean;
+    setAsc: Dispatch<SetStateAction<boolean>>;
 };
 function Header(props: HeaderProps): JSX.Element {
     const classes = headerStyles();
-    const { view, setView, SORT, ordering, setOrdering } = props;
+    const { count, view, setView, SORT, ordering, setOrdering, asc, setAsc } = props;
     const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
         setView(nextView);
     };
@@ -65,13 +67,19 @@ function Header(props: HeaderProps): JSX.Element {
     return (
         <Box className={classes.header}>
             <Typography className={classes.headerText} variant="h5">
-                Showing 6 projects
+                Showing {count || 0} product
             </Typography>
             <Box className={classes.headerRight}>
+                <Button onClick={() => setAsc(!asc)} size="small">
+                    {
+                        asc ? <ArrowDownward fontSize="small" /> : <ArrowUpward fontSize="small"/>
+                    } 
+                </Button>
                 <Button className={classes.sortButton} onClick={handleClick} size="small">
                     {SORT[ordering]}
                     <ArrowDropDown fontSize="small" />
                 </Button>
+
                 <Menu
                     id={id}
                     open={open}
@@ -118,9 +126,9 @@ function ItemFilterResult(
         count?: number;
         productList?: ProductCardView[];
         fetchNewPage: (limit: number, offset: number) => void;
-    } & Omit<HeaderProps, 'view' | 'setView'>,
+    } & Omit<HeaderProps, 'view' | 'setView' | "count">,
 ): JSX.Element {
-    const { loading, productList, count = 0, fetchNewPage, SORT, ordering, setOrdering } = props;
+    const { loading, productList, count = 0, fetchNewPage, ...headProps } = props;
     // const loading = productList == undefined;
     const classes = useStyles();
     const [view, setView] = React.useState('module');
@@ -135,7 +143,7 @@ function ItemFilterResult(
     return (
         <Box>
             <div>
-                <Header {...{ view, setView, SORT, ordering, setOrdering }} />
+                <Header {...{count,  view, setView, ...headProps }} />
                 <Grid container spacing={3}>
                     {loading
                         ? new Array(8).fill(1).map((v, i) => (

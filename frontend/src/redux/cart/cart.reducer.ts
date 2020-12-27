@@ -1,6 +1,7 @@
-import { ADD_TO_CART, FETCH_CART_DATA, FETCH_FAIL, FETCH_SUCCESS, SET_FETCHING, SET_IS_ERROR } from './cart.types';
-import { selectModelItemInCart } from './cart.manager';
-import { ShopOrderIdsType, CartItemType, CartTypes, CartState } from './cart';
+import { ADD_TO_CART, FETCH_FAIL, FETCH_SUCCESS, SET_FETCHING, SET_IS_ERROR } from './cart.types';
+import { CartItemType, CartTypes, CartState, CartItem } from './cart';
+import { ProductResponse } from '../product/product.d';
+import { addCartItem } from './cart.manager';
 
 export const INITIAL_STATE: CartState = {
     isFetching: false,
@@ -18,6 +19,10 @@ const cartReducer = (state: CartState = INITIAL_STATE, action: { type: string; p
             return { ...state, isError: false, isFetching: false };
         case FETCH_SUCCESS:
             return { isFetching: false, isError: false, data: action.payload as CartTypes };
+        case ADD_TO_CART:
+            const payload = action.payload as CartItem;
+            return { isFetching: false, isError: false, data: addCartItem(state.data, payload).tableData };
+
         default:
             return state;
     }

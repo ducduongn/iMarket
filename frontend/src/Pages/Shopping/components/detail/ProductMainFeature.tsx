@@ -10,6 +10,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import classNames from 'classnames';
 import { Skeleton } from '@material-ui/lab';
 import { ProductDetailView, ProductModelResponse } from '../../../../redux/product/product.d';
+import { ProductMainStyles } from './Detail.styles';
 
 const useStyles = makeStyles(() => ({
     sectionRoot: {
@@ -34,14 +35,15 @@ export type ProductMainFeatureProps = {
     product?: ProductDetailView;
     buyQuantity: number;
     setBuyQuantity: Dispatch<SetStateAction<number>>;
+    onBuyClick: () => unknown;
 } & {
     selectedModel: ProductModelResponse | undefined;
     selectModel: Dispatch<SetStateAction<ProductModelResponse | undefined>>;
 };
 
 function ProductMainFeature(props: ProductMainFeatureProps): JSX.Element {
-    const { product, buyQuantity, setBuyQuantity, selectedModel, selectModel } = props;
-    const classes = useStyles();
+    const { product, buyQuantity, setBuyQuantity, selectedModel, selectModel, onBuyClick} = props;
+    const classes = ProductMainStyles();
     const loading = product == undefined;
     return (
         <Section classes={{ root: classes.sectionRoot }}>
@@ -68,6 +70,7 @@ function ProductMainFeature(props: ProductMainFeatureProps): JSX.Element {
                         setBuyQuantity={setBuyQuantity}
                         selectedModel={selectedModel}
                         selectModel={selectModel}
+                        onBuyClick={onBuyClick}
                     />
                 )}
             </BreackDrirectionGrid>

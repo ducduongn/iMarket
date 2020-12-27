@@ -67,7 +67,7 @@ export const ProductCard = withStyles(productCardStyle)(
                         <Typography gutterBottom variant="h6" noWrap>
                             {name}
                         </Typography>
-                        <Rating precision={0.01} className={classes.rating} readOnly value={rating_star} size="small" />
+                        <Rating precision={0.1} className={classes.rating} readOnly value={rating_star} size="small" />
                         <div className={classes.contentWrapper}>
                             <PriceFeature card price={price} comparePrice={oldprice} unit="₫" />
                         </div>

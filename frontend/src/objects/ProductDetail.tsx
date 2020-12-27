@@ -97,9 +97,14 @@ export const PRODUCT_LIST: Array<ProductCardView> = [
         oldprice: 1500000,
     },
 ];
-
-export const FILTER_SECTIONS = {
-    cpu: {
+export type FilterSection =  {
+    headingName: string;
+    idFilterSection: string;
+    icon: JSX.Element;
+    options: string[];
+}
+export const FILTER_SECTIONS = [
+    {
         headingName: 'PROCESSORS',
         idFilterSection: 'pro01',
         icon: ProcessorIcon,
@@ -110,7 +115,7 @@ export const FILTER_SECTIONS = {
             'AMD 3rd GEN Ryzen',
         ],
     },
-    gpu: {
+    {
         headingName: 'GRAPHICS',
         idFilterSection: 'gra02',
         icon: ProcessorIcon,
@@ -122,13 +127,13 @@ export const FILTER_SECTIONS = {
             'GeForce RTX 2070',
         ],
     },
-    ram: {
+    {
         headingName: 'RAM',
         idFilterSection: 'ram03',
         icon: RamIcon,
         options: ['32 GB', '16 GB', '8 GB', '4 GB'],
     },
-};
+]
 
 export function getShopOrderData() {
     return Axios.get('/data/shop_order.json').then();

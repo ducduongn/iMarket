@@ -16,7 +16,7 @@ function CartPage(props: ConnectReduxProps): JSX.Element {
     const [data, setData] = useState<CartTypes>(cart.data);
     React.useEffect(() => setData(cart.data), [cart]);
     React.useEffect(() => {
-        action(FETCH_CART_DATA);
+        // action(FETCH_CART_DATA);
     }, []);
     return (
         <main>

@@ -15,12 +15,12 @@ function DialogSelector(props) {
         openChangePasswordDialog,
         onClose,
     } = props;
-    const [loginStatus, setLoginStatus] = useState(null);
-    const [registerStatus, setRegisterStatus] = useState(null);
+    const [loginStatus, setLoginStatus] = useState({});
+    const [registerStatus, setRegisterStatus] = useState({});
 
     const _onClose = useCallback(() => {
-        setLoginStatus(null);
-        setRegisterStatus(null);
+        setLoginStatus({});
+        setRegisterStatus({});
         onClose();
     }, [onClose, setLoginStatus, setRegisterStatus]);
 
@@ -33,6 +33,7 @@ function DialogSelector(props) {
                         openTermsDialog={openTermsDialog}
                         status={registerStatus}
                         setStatus={setRegisterStatus}
+                        openLoginDialog={openLoginDialog}
                     />
                 );
             case 'termsOfService':
@@ -44,6 +45,7 @@ function DialogSelector(props) {
                         status={loginStatus}
                         setStatus={setLoginStatus}
                         openChangePasswordDialog={openChangePasswordDialog}
+                        openRegisterDialog={openRegisterDialog}
                     />
                 );
             case 'changePassword':

@@ -13,12 +13,12 @@ export function createRowItem(item: ModelOrderType): RowItemType {
     };
 }
 
-export function createTableData(shop_order: CartTypes): CartTypes {
-    return shop_order.map((v) => ({
-        shop: { shopid: v.shop.shopid, shopName: v.shop.shopname },
-        items: v.items.map((i) => createRowItem(i)),
-    }));
-}
+// export function createTableData(shop_order: CartTypes): CartTypes {
+//     return shop_order.map((v) => ({
+//         shop: { shopid: v.shop.shopid, shopname: v.shop.shopname },
+//         items: v.items.map((i) => createRowItem(i)),
+//     }));
+// }
 
 type UpdateCart = {
     success: boolean;
@@ -41,18 +41,18 @@ export function deleteTableDataByRow(tableData: CartTypes, row: RowItemType | un
     return createUpdateCartResponse(false, tableData);
 }
 
-export function deleteTableDataByModelId(tableData: CartTypes, modelid: number): UpdateCart {
-    let modelInd = -1;
-    const shop = tableData.find((s) => {
-        modelInd = s.items.findIndex((i) => i.modelid == modelid);
-        return modelInd > 0;
-    });
-    if (modelInd > 0) {
-        shop.items.splice(modelInd, 1);
-        return createUpdateCartResponse(true, [...tableData.filter((s) => s.items.length > 0)]);
-    }
-    return createUpdateCartResponse(false, tableData);
-}
+// export function deleteTableDataByModelId(tableData: CartTypes, modelid: number): UpdateCart {
+//     let modelInd = -1;
+//     const shop = tableData.find((s) => {
+//         modelInd = s.items.findIndex((i) => i.modelid == modelid);
+//         return modelInd > 0;
+//     });
+//     if (modelInd > 0) {
+//         shop.items.splice(modelInd, 1);
+//         return createUpdateCartResponse(true, [...tableData.filter((s) => s.items.length > 0)]);
+//     }
+//     return createUpdateCartResponse(false, tableData);
+// }
 
 export function deleteTableDataByModelIds(tableData: CartTypes, modelids: Set<number>): UpdateCart {
     let count = 0;

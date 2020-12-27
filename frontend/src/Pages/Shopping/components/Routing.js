@@ -7,12 +7,49 @@ import ProductDetail from './detail/Detail.page';
 import Browse from './catebrowse/Browse.page';
 import Cart from './cart/Cart.page';
 import Checkout from './checkout/Checkout.page';
+import {withStyles} from '@material-ui/core/styles';
+
+const styles = (theme) => ({
+    wrapper: {
+        margin: theme.spacing(1),
+        width: 'auto',
+        [theme.breakpoints.up('xs')]: {
+            width: '95%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: theme.spacing(4),
+            marginBottom: theme.spacing(4),
+        },
+        [theme.breakpoints.up('sm')]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            width: '90%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+        [theme.breakpoints.up('md')]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            width: '82.5%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+        [theme.breakpoints.up('lg')]: {
+            marginTop: theme.spacing(6),
+            marginBottom: theme.spacing(6),
+            width: '70%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+    },
+});
 
 function Routing(props) {
-    const { selectHome } = props;
+    const { classes, selectHome } = props;
     return (
-        <Switch>
-            {/* {blogPosts.map((post) => (
+        <div className={classes.wrapper}>
+            <Switch>
+                {/* {blogPosts.map((post) => (
         <PropsRoute
           path={post.url}
           component={BlogPost}
@@ -26,12 +63,13 @@ function Routing(props) {
           )}
         />
       ))} */}
-            <PropsRoute path="/checkout" component={Checkout} />
-            <PropsRoute path="/cart" component={Cart} />
-            <PropsRoute path="/browse" component={Browse} />
-            <PropsRoute exact path="/detail/:id(\d+)/" component={ProductDetail} />
-            <PropsRoute path="/" component={Home} selectHome={selectHome} />
-        </Switch>
+                <PropsRoute path="/checkout" component={Checkout} />
+                <PropsRoute path="/cart" component={Cart} />
+                <PropsRoute path="/browse" component={Browse} />
+                <PropsRoute exact path="/detail/:id(\d+)/" component={ProductDetail} />
+                <PropsRoute path="/" component={Home} selectHome={selectHome} />
+            </Switch>
+        </div>
     );
 }
 
@@ -40,4 +78,4 @@ Routing.propTypes = {
     selectHome: PropTypes.func.isRequired,
 };
 
-export default memo(Routing);
+export default withStyles(styles, { withTheme: true })(memo(Routing));

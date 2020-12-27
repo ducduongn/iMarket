@@ -90,16 +90,16 @@ export function useSnackbar(): SnackbarContextType {
     }
     return context;
 }
-export type WithSnackbar = { pushMessageToSnackbar: SnackbarContextType };
-export function withSnackbar<T extends WithSnackbar = WithSnackbar>(
-    WrappedComponent: React.ComponentType<T>,
-): JSX.Element {
-    // Try to create a nice displayName for React Dev Tools.
-    const displayName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
-    const ComponentWithSnackbar = (props: Omit<T, keyof WithSnackbar>) => {
-        const pushMessageToSnackbar = useSnackbar();
-        return <WrappedComponent pushMessageToSnackbar={pushMessageToSnackbar} {...props} />;
-    };
-    ComponentWithSnackbar.displayName = `WithSnackbar(${displayName})`;
-    return ComponentWithSnackbar;
-}
+// export type WithSnackbar = { pushMessageToSnackbar: SnackbarContextType };
+// export function withSnackbar<T extends WithSnackbar = WithSnackbar>(
+//     WrappedComponent: React.ComponentType<T>,
+// ): JSX.Element {
+//     // Try to create a nice displayName for React Dev Tools.
+//     const displayName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+//     const ComponentWithSnackbar = (props: Omit<T, keyof WithSnackbar>) => {
+//         const pushMessageToSnackbar = useSnackbar();
+//         return <WrappedComponent pushMessageToSnackbar={pushMessageToSnackbar} {...props} />;
+//     };
+//     ComponentWithSnackbar.displayName = `WithSnackbar(${displayName})`;
+//     return ComponentWithSnackbar;
+// }

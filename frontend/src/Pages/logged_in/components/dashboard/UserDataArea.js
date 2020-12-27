@@ -64,15 +64,15 @@ const rows = [
   {
     id: "name",
     numeric: false,
-    label: "Name",
+    label: "Product Name",
   },
-  { id: "number1", numeric: false, label: "Category 1" },
-  { id: "number2", numeric: false, label: "Category 2" },
-  { id: "number3", numeric: false, label: "Category 3" },
+  { id: "number1", numeric: false, label: "Data 1" },
+  { id: "number2", numeric: false, label: "Data 2" },
+  { id: "number3", numeric: false, label: "Data 3" },
   {
     id: "number4",
     numeric: false,
-    label: "Category 4",
+    label: "Data 4",
   },
   {
     id: "actions",
@@ -181,7 +181,7 @@ function CustomTable(props) {
         content={
           deleteTargetDialogRow ? (
             <span>
-              {"Do you really want to remove the friend "}
+              {"Do you really want to remove the product "}
               <b>{deleteTargetDialogRow.name}</b>
               {" from your list?"}
             </span>

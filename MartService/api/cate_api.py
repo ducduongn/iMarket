@@ -4,7 +4,7 @@ from MartService.models import Category
 from MartService.serializers import CategorySerializer
 from MartService.filters import CategoryFilter
 
-class CategoryList(generics.ListAPIView):
+class CategoryList(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     # authentication_classes []
     serializer_class = CategorySerializer
@@ -13,6 +13,8 @@ class CategoryList(generics.ListAPIView):
 
     queryset = Category.objects.all()
     
-
-    # def get_queryset(self):
-    #     return queryset
+class CategoryDetail(generics.RetrieveUpdateAPIView):
+    # permission_classes = [IsStaffOrTargetUser]
+    # authentication_classes = [TokenAuthentication, ]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

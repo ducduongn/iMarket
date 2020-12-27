@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -6,11 +6,16 @@ import Typography from '@material-ui/core/Typography';
 // import CartIcon from '../cart-icon/cart-icon.component';
 import { CartIconButton, AccountIconButton, NotiIconButton, MenuIconButton, SearchIconButton } from './IconButtons';
 import useStyles from './NavBar.style';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import DialogSelector from './DialogSelector';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/root-reducer';
+import { Button } from '@material-ui/core';
 
 function PrimaryHeaderBar(): JSX.Element {
     const classes = useStyles();
+    const history = useHistory();
+    const authState = useSelector((state: RootState) => state.auth);
     const menuId = 'primary-search-account-menu';
     const [dialogOpen, setDialogOpen] = useState<string | null>(null);
     const closeDialog = useCallback(() => {
@@ -31,6 +36,11 @@ function PrimaryHeaderBar(): JSX.Element {
     const openChangePasswordDialog = useCallback(() => {
         setDialogOpen('changePassword');
     }, [setDialogOpen]);
+
+    useEffect(() => {
+        if (authState.isAuthenticated) closeDialog();
+    }, [authState.isAuthenticated]);
+
     return (
         <div className={classes.grow}>
             <AppBar position="fixed" color="inherit" elevation={1}>
@@ -46,7 +56,15 @@ function PrimaryHeaderBar(): JSX.Element {
                     <SearchIconButton />
                     <NotiIconButton />
                     <CartIconButton />
-                    <AccountIconButton onClick={openLoginDialog} menuId={menuId} />
+                    {authState.isAuthenticated ? (
+                        <AccountIconButton
+                            tooltip="Account"
+                            onClick={() => history.push('/c/dashboard')}
+                            menuId={menuId}
+                        />
+                    ) : (
+                        <Button onClick={openLoginDialog}>Login</Button>
+                    )}
                 </Toolbar>
             </AppBar>
             <Toolbar />
