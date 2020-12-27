@@ -129,13 +129,6 @@ class SignUpAPI(generics.GenericAPIView):
 
 # Login API
 class LoginAPI(generics.GenericAPIView):
-    """
-    POST method\n
-    REQUEST format {email, password}\n
-    RESPONSE 1 200 {success, user, token}\n
-    RESPONSE 2 400 2 {success, errors}\n
-
-    """
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -145,19 +138,22 @@ class LoginAPI(generics.GenericAPIView):
             serializer.is_valid(raise_exception=True)
         except SerialValidationError as e:
             return Response({
-                **e.detail
-            }, status=status.HTTP_400_BAD_REQUEST)
+                "success": False,
+                "errors": e.detail
+            })
         user = serializer.validated_data
         # if AuthToken.objects.filter(user=user).exists():
         #     raise AuthenticationFailed(
         #         detail='Account has been login in. Please logout')
         # login(request, user)
-        _, token = AuthToken.objects.create(user=request.user)
+        _, token = AuthToken.objects.create(user)
         login(request, user)
         return Response({
+            "success": True,
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": token
         })
+
 
 class ActivateAccountAPI(generics.GenericAPIView):
     """

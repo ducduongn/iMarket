@@ -217,6 +217,8 @@ class Cart(models.Model):
         User, related_name='cart', on_delete=models.CASCADE, primary_key=True)
     ctime = models.DateField(_("Created at"), auto_now=True)
     uptime = models.DateField(_("Updated at"), auto_now=True)
+    # total_price = models.DecimalField(
+    #     max_digits=10, decimal_places=2, default=Decimal('0.00'))
 
     class Meta:
         db_table = "cart"

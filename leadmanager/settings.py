@@ -46,9 +46,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     # Auth
-    'knox',
-    'rest_framework_jwt',
-    
+    'knox',   
     # My apps
     'leads',
     'account',

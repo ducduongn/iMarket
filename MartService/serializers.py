@@ -1,6 +1,6 @@
 from account.models import User
 from MartService.models import Cart, CartItem, Category, Order, Payment, Product, ProductModel, Rating, ShipProfile, Shop, TierVariation
-from . import fields
+from MartService import fields
 from rest_framework import serializers
 
 class ShopSerializer(serializers.ModelSerializer):
@@ -62,11 +62,43 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = [field.name for field in model._meta.fields]
 
-class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True, read_only=True)
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+             
+    cartitems = CartItemSerializer(many=True, read_only=True)
+
+    def create(self, validated_data, nums):
+        user = self.context["request"].user
+        cart_item = CartItem()
+        cart_item.product_model = validated_data
+        cart_item.unit_price = validated_data["price"]
+        cart_item.quantity = nums
+
+        existed = Cart.objects.filter(user=user)
+
+        if existed:
+            existed = existed[0]
+            existed.cartItems.append(cart_item) 
+            existed.save()
+        else:
+            existed = Cart.objects.create(customer=user)
+
+        return existed
+
+    def update(self, instance, validated_data):
+
+        instance.cartItems = validated_data["cartitems"]
+        instance.save()
+        return instance
     class Meta:
         model = Cart
-        fields = [field.name for field in model._meta.fields] + ['items']
+        fields = [field.name for field in model._meta.fields] + ['cartitems', 'user']
+
+# class CartSerializer(serializers.ModelSerializer):
+#     items = CartItemSerializer(many=True, read_only=True)
+    
 
 class ShipProfileSerializer(serializers.ModelSerializer):
     class Meta:

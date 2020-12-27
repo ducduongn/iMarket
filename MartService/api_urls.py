@@ -24,8 +24,8 @@ from .api.cart_api import (
     CartDetail, 
     CartList, 
     CartRetrieveUpdate,
-    CartDestroy
-)
+    CartDestroy,
+    )
 
 from .api.cart_item_api import (
     CartItemList,
