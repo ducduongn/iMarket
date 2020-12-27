@@ -8,7 +8,7 @@ from rest_framework import filters
 
 from MartService.models import Cart, ProductModel, CartItem
 from account.models import User 
-from MartService.serializers import CartSerializer
+from MartService.serializers import CartItemSerializer
 from django.http import JsonResponse
 
 import MartService.serializers as MartSerializer
@@ -19,30 +19,30 @@ DELETE_SUCCESS = 'deleted'
 UPDATE_SUCCESS = 'updated'
 CREATE_SUCCESS = 'created'
 
-class CartList(generics.ListCreateAPIView):
+class CartItemList(generics.ListCreateAPIView):
     # permission_classes = [IsOwnerOrReadOnly]
     # authentication_classes = []
 
-    serializer_class = CartSerializer
+    serializer_class = CartItemSerializer
 
-    queryset = Cart.objects.all()
+    queryset = CartItem.objects.all()
 
-class CartDetail(generics.RetrieveAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+class CartItemDetail(generics.RetrieveAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
 
-class CartCreate(generics.CreateAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+class CartItemCreate(generics.CreateAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
 
-class CartRetrieveUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+class CartItemRetrieveUpdate(generics.RetrieveUpdateAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     # def perform_update(self, serializer):
     #     serializer.save(user=self.request.user.id)
 
-class CartDestroy(generics.RetrieveDestroyAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+class CartItemDestroy(generics.RetrieveDestroyAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
