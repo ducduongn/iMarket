@@ -34,19 +34,26 @@ class ProductSerializer(serializers.ModelSerializer):
     shop = ShopSerializer()
     variations = TierVariationSerializer(many=True)
     models = ModelVaritationSerializer(many=True)
+    min_max_price = serializers.SerializerMethodField()
+    
     rating = RatingSerializer()
 
     class Meta:
         model = Product
-        fields = [field.name for field in model._meta.fields] + ['shop', 'rating', 'variations', 'models']
-        
+        fields = [field.name for field in model._meta.fields] + ['shop', 'rating', 'variations', 'models', 'min_max_price' ]
+    
+    def get_min_max_price(self, object):
+    
+        prices = [pm.price for pm in object.models.all()]
+        return [min(prices) , max(prices)]
+    
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True, read_only=True)
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = [field.name for field in model._meta.fields if field.name != 'product']
 
         
 # --------------------Order----------------------

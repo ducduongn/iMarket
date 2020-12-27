@@ -68,7 +68,8 @@ def add_product_by_dict(d):
     # print(d)
     itemid = d['itemid']
     if Product.objects.filter(pk=itemid): return
-    product = Product.spcreate(get_or_add_shop(d['shopid']), **d)
+    rating = Rating.spcreate( **d['item_rating'])
+    product = Product.spcreate(get_or_add_shop(d['shopid']),rating , **d)
     # img = Image.open(img) # Creates an instance of PIL Image class - PIL does the verification of file
     # img_copy = copy.copy(img) # Verify the copied image, not original - verification requires you to open the image again after verification, but since we don't have the file saved yet we won't be able to. This is because once we read() urllib2.urlopen we can't access the response again without remaking the request (i.e. downloading the image again). Rather than do that, we duplicate the PIL Image in memory.
     # img_copy.save('test2.jpeg')
@@ -100,14 +101,13 @@ def add_product_by_dict(d):
         if len(tiers) == 0:
             m['tier_index'] = -1
         models.append(ProductModel.spcreate(m['modelid'], product, **m))
-    rating = Rating.spcreate(product, **d['item_rating'])
+    rating.save()
     product.save()
     for t in tiers:
         t.save()
     for m in models:
         m.save()
         # stock
-    rating.save()
     print('added', product)
 
 def run(*arg):

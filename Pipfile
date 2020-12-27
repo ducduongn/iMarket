@@ -22,6 +22,8 @@ requests = "*"
 pillow = "*"
 django-unixdatetimefield = "*"
 django-cloudinary-storage = "*"
+six = "*"
+djangorestframework-filters = "==1.0.0.dev0"
 
 [requires]
 python_version = "3.8"

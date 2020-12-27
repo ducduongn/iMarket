@@ -19,15 +19,15 @@ DELETE_SUCCESS = 'deleted'
 UPDATE_SUCCESS = 'updated'
 CREATE_SUCCESS = 'created'
 
-class ProductView(generics.ListCreateAPIView):
+class CartView(generics.ListCreateAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     http_method_names = ['get', 'post', "update"]
 
-    serializer_class = ProductSerializer
+    serializer_class = CartSerializer
 
     def get_queryset(self):
-        return Product.objects.all()
-
+        return Ca.objects.all()
+    
     def get_detail(self, request, pk):
         product = Product.objects.get(pk=pk)
         serializer = ProductSerializer(product)

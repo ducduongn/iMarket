@@ -63,6 +63,7 @@ class Product(models.Model):
     # dev only
     image = models.ImageField(
         _("Overview Image"), upload_to='images/', storage=DontCreateIfExistStorage(), default="")
+    rating = models.OneToOneField("Rating", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "product"
@@ -71,7 +72,7 @@ class Product(models.Model):
         return self.name
 
     @classmethod
-    def spcreate(cls, shop, *args, **d):
+    def spcreate(cls, shop, rating, *args, **d):
         itemid = d['itemid']
         catid = next(filter(lambda x: x['no_sub'], d['categories']))['catid']
         pparam = {
@@ -84,6 +85,7 @@ class Product(models.Model):
             "ctime":datetime.utcfromtimestamp(int(d['ctime'])),
             "oldprice": d['price_before_discount'] / 10000,
             "stock": d['stock'],
+            "rating": rating
         }
         return cls(pk=itemid, **pparam)
 
@@ -95,8 +97,6 @@ class ProductImage():
 
 
 class Rating(models.Model):
-    product = models.OneToOneField(
-        "Product", verbose_name=_("Rating"), on_delete=models.CASCADE)
     rating_star = models.FloatField(_("Rating"))
     count1 = models.IntegerField(_("Count 1 star"))
     count2 = models.IntegerField(_("Count 2 star"))
@@ -105,7 +105,7 @@ class Rating(models.Model):
     count5 = models.IntegerField(_("Count 5 star"))
 
     @classmethod
-    def spcreate(cls, product, **drating):
+    def spcreate(cls, **drating):
         drating_count = drating['rating_count']
         rating_params = {
             "rating_star": drating['rating_star'],
@@ -115,7 +115,7 @@ class Rating(models.Model):
             'count4': drating_count[3],
             'count5': drating_count[4],
         }
-        return cls(product=product, **rating_params)
+        return cls(**rating_params)
 
 
 class TierVariation(models.Model):
@@ -174,7 +174,7 @@ class ProductModel(models.Model):
 
 
 class Category(models.Model):
-    cartid = models.AutoField(primary_key=True, default="")
+    catid = models.AutoField(primary_key=True, default="")
     name = models.CharField(_('Category Name'), max_length=50, default="")
     description = models.CharField(
         _('Description'), max_length=200, blank=True)

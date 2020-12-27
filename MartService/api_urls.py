@@ -5,6 +5,7 @@ from rest_framework import routers
 from knox import views as knox_views
 
 from .api.product_api import ProductList, ProductDetail
+from .api.cate_api import CategoryList
 from .api.order_api import OrderView, OrderList
 
 app_name = 'api_mart_service'
@@ -24,6 +25,8 @@ urlpatterns = [
     # url(r'^', include(router.urls)),
     path('products/', ProductList.as_view(), name="products"),
     path('products/<int:pk>/', ProductDetail.as_view()),
+    path('category/', CategoryList.as_view(), name="products"),
+    path('category/<int:pk>/', CategoryList.as_view()),
     # url(r'^products/$', ProductList.as_view()),
     # url(r'^products/(?P&lt;pk&gt;[0-9]+)/$', ProductList.as_view()),
     # path('products/?search=[search_field]/', ProductView.as_view()),
