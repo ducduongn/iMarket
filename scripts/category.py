@@ -86,9 +86,9 @@ def run(*arg):
             # get_json()
             pass
         elif arg[0] == 'add':
-            # parents, children = buid_cate_tree()
-            # print(parents)
-            # print(children)
+            parents, children = buid_cate_tree()
+            print(parents)
+            print(children)
             for k, v in parents.items():
                 print(k)
                 pc = Category.spcreate(pk=k,**v)

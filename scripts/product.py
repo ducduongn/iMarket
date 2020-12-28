@@ -121,7 +121,7 @@ def run(*arg):
                 print(ref)
                 catid = ref[-5:]
                 js = get_json(catid, ref)
-                with open(DATA_DIR + f'/products/{catid}.json', 'w') as f:
+                with open(DATA_DIR + f'/products/cate/{catid}.json', 'w') as f:
                     json.dump(js, f)
         elif arg[0] == 'add':
             ddir = os.path.join(DATA_DIR, 'products/cate')
