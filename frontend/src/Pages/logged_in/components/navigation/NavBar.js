@@ -33,6 +33,7 @@ import NavigationDrawer from "../../../shared/components/NavigationDrawer";
 import { action } from "../../../../redux/store";
 import { LOGOUT } from "../../../../redux/auth/auth.types";
 import { useSelector } from "react-redux";
+import HeadBar from '../../../shared/components/navigation/NavBar';
 
 const styles = (theme) => ({
   appBar: {
@@ -217,83 +218,7 @@ function NavBar(props) {
   ];
   return (
     <Fragment>
-      <AppBar position="sticky" className={classes.appBar}>
-        <Toolbar className={classes.appBarToolbar}>
-          <Box display="flex" alignItems="center">
-            <Hidden smUp>
-              <Box mr={1}>
-                <IconButton
-                  aria-label="Open Navigation"
-                  onClick={openMobileDrawer}
-                  color="primary"
-                >
-                  <MenuIcon />
-                </IconButton>
-              </Box>
-            </Hidden>
-            <Hidden xsDown>
-              <Typography
-                variant="h4"
-                className={classes.brandText}
-                display="inline"
-                color="primary"
-              >
-                Wa
-              </Typography>
-              <Typography
-                variant="h4"
-                className={classes.brandText}
-                display="inline"
-                color="secondary"
-              >
-                Ver
-              </Typography>
-            </Hidden>
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="center"
-            width="100%"
-          >
-            {isWidthUp("sm", width) && (
-              <Box mr={3}>
-                <Balance
-                  balance={2573}
-                  openAddBalanceDialog={openAddBalanceDialog}
-                />
-              </Box>
-            )}
-            <MessagePopperButton messages={messages} />
-            <ListItem
-              disableGutters
-              className={classNames(classes.iconListItem, classes.smBordered)}
-            >
-              <Avatar
-                alt="profile picture"
-                src={`${process.env.PUBLIC_URL}/images/logged_in/profilePicture.jpg`}
-                className={classNames(classes.accountAvatar)}
-              />
-              {isWidthUp("sm", width) && (
-                <ListItemText
-                  className={classes.username}
-                  primary={
-                    <Typography color="textPrimary">Username</Typography>
-                  }
-                />
-              )}
-            </ListItem>
-          </Box>
-          <IconButton
-            onClick={openDrawer}
-            color="primary"
-            aria-label="Open Sidedrawer"
-          >
-            <SupervisorAccountIcon />
-          </IconButton>
-          <SideDrawer open={isSideDrawerOpen} onClose={closeDrawer} />
-        </Toolbar>
-      </AppBar>
+      <HeadBar />
       <Hidden xsDown>
         <Drawer //  both drawers can be combined into one for performance
           variant="permanent"

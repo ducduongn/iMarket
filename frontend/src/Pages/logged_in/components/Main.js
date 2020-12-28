@@ -8,6 +8,7 @@ import ConsecutiveSnackbarMessages from "../../shared/components/ConsecutiveSnac
 import smoothScrollTop from "../../shared/functions/smoothScrollTop";
 import persons from "../dummy_data/persons";
 import LazyLoadAddBalanceDialog from "./subscription/LazyLoadAddBalanceDialog";
+import { api_get_productList, res2cards } from '../../../redux/product/product.manager';
 
 const styles = (theme) => ({
   main: {
@@ -53,10 +54,15 @@ function Main(props) {
   const [isAddBalanceDialogOpen, setIsAddBalanceDialogOpen] = useState(false);
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState(null);
 
+  const [productList, setProductList] = useState();
+  useEffect(() => {
+    api_get_productList({ onSuccess: (data) => setProductList(res2cards(data)) });
+  }, []);
   const fetchRandomTargets = useCallback(() => {
     const targets = [];
+    if(productList == undefined) return;
     for (let i = 0; i < 35; i += 1) {
-      const randomPerson = persons[Math.floor(Math.random() * persons.length)];
+      const randomPerson = productList[Math.floor(Math.random() * productList.length)];
       const target = {
         id: i,
         number1: Math.floor(Math.random() * 251),
@@ -70,7 +76,7 @@ function Main(props) {
       targets.push(target);
     }
     setTargets(targets);
-  }, [setTargets]);
+  }, [setTargets, productList]);
 
   const openAddBalanceDialog = useCallback(() => {
     setIsAddBalanceDialogOpen(true);
@@ -152,7 +158,7 @@ function Main(props) {
     for (let i = 0; i < iterations; i += 1) {
       const randomTransactionTemplate =
         transactionTemplates[
-          Math.floor(Math.random() * transactionTemplates.length)
+        Math.floor(Math.random() * transactionTemplates.length)
         ];
       const transaction = {
         id: i,

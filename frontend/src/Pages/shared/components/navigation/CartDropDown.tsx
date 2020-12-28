@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import { LocalShippingOutlined, ShoppingCartOutlined } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
-import { connect, ConnectedProps } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/root-reducer';
 import { numberWithCommas } from '../../../../utils';
 
@@ -57,28 +57,27 @@ const StyledAvatar = withStyles(() => ({
     },
 }))(Avatar);
 type ProductCartReview = { itemid: number; name: string; desc: string; price: number };
-const connector = connect((state: RootState) => {
-    const ret: ProductCartReview[] = [];
-    const cart = state.cart;
-    cart.data.map((s) =>
-        s.items.map((i) =>
-            ret.push({ itemid: i.itemid, name: i.name, desc: s.shop.shopname, price: i.price / 1000000 }),
-        ),
-    );
-    return { cart: ret };
-});
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
 
-type CartDropDownProps = PropsFromRedux & {
+type CartDropDownProps = {
     anchorEl: null | Element | ((element: Element) => Element);
     setAnchorEl: React.Dispatch<React.SetStateAction<null | Element | ((element: Element) => Element)>>;
 };
 const CartDropDown = (props: CartDropDownProps) => {
-    const { anchorEl, setAnchorEl, cart } = props;
+    const { anchorEl, setAnchorEl } = props;
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const cart = useSelector((state: RootState) => {
+        const ret: ProductCartReview[] = [];
+        const cart = state.cart;
+        cart.data.map((s) =>
+            s.items.map((i) =>
+                ret.push({ itemid: i.itemid, name: i.name, desc: s.shop.shopname, price: i.price / 1000000 }),
+            ),
+        );
+        return ret;
+    });
     return (
         <StyledPopover
             id="customized-Styledmenu"
@@ -121,4 +120,4 @@ const CartDropDown = (props: CartDropDownProps) => {
         </StyledPopover>
     );
 };
-export default connector(CartDropDown);
+export default CartDropDown;

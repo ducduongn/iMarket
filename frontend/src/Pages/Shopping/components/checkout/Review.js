@@ -40,7 +40,7 @@ export default function Review() {
         const ret = [];
         const cart = state.cart;
         cart.data.map((s) =>
-            s.items.map((i) => ret.push({ name: i.name, desc: s.shop.shopname, price: i.price / 1000000 })),
+            s.items.map((i) => ret.push({ name: i.name, desc: s.shop.shopname, price: i.price / 100000 })),
         );
         return ret;
     });
@@ -66,7 +66,7 @@ export default function Review() {
                 <ListItem className={classes.listItem}>
                     <ListItemText primary="Total" />
                     <Typography variant="subtitle1" className={classes.total}>
-                        $34.06
+                        {numberWithCommas(products.map(o => o.price).reduce((a, c) => a+c ))} VND
                     </Typography>
                 </ListItem>
             </List>

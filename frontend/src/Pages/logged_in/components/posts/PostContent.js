@@ -124,7 +124,7 @@ function PostContent(props) {
           onClick={openAddPostModal}
           disableElevation
         >
-          Add Post
+          Add Product
         </Button>
       </Toolbar>
       <Divider />

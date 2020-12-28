@@ -119,7 +119,7 @@ function CustomTable(props) {
       _targets.splice(index, 1);
       setTargets(_targets);
       pushMessageToSnackbar({
-        text: "Your friend has been removed",
+        text: "Your product has been removed",
       });
     }, 1500);
   }, [
@@ -173,7 +173,7 @@ function CustomTable(props) {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Some user data</Typography>
+        <Typography>Some product data</Typography>
       </AccordionSummary>
       <ConfirmationDialog
         open={isDeleteTargetDialogOpen}

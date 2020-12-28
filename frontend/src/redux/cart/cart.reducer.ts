@@ -1,4 +1,4 @@
-import { ADD_TO_CART, FETCH_FAIL, FETCH_SUCCESS, SET_FETCHING, SET_IS_ERROR } from './cart.types';
+import { ADD_TO_CART, FETCH_FAIL, FETCH_SUCCESS, SET_FETCHING, SET_IS_ERROR, CLEAR_CART } from './cart.types';
 import { CartItemType, CartTypes, CartState, CartItem } from './cart';
 import { ProductResponse } from '../product/product.d';
 import { addCartItem } from './cart.manager';
@@ -22,7 +22,8 @@ const cartReducer = (state: CartState = INITIAL_STATE, action: { type: string; p
         case ADD_TO_CART:
             const payload = action.payload as CartItem;
             return { isFetching: false, isError: false, data: addCartItem(state.data, payload).tableData };
-
+        case CLEAR_CART:
+            return { isFetching: false, isError: false, data: []};
         default:
             return state;
     }
